@@ -8,7 +8,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
 .app{display:flex;height:100vh;overflow:hidden}
 
 /* SIDEBAR - コンパクト */
-.sidebar{width:64px;background:#fff;border-right:.5px solid #e0e0e0;display:flex;flex-direction:column;flex-shrink:0;transition:width .25s ease;overflow:hidden}
+.sidebar{width:64px;background:#fff;border-right:.5px solid #e0e0e0;display:flex;flex-direction:column;flex-shrink:0;transition:width .25s ease;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .sidebar.expanded{width:200px}
 .sidebar-toggle{width:100%;padding:14px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;border-bottom:.5px solid #e8e8e8;background:#fff;border:none;flex-shrink:0}
 .sidebar-toggle:hover{background:#f5f5f5}
@@ -39,12 +39,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
 .nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:#1D9E75;border-radius:0 3px 3px 0}
 .sidebar.expanded .nav-item.active::before{display:none}
 
-.user-area{margin-top:auto;padding:8px 0;border-top:.5px solid #e8e8e8;flex-shrink:0}
-.role-toggle-mini{display:flex;align-items:center;justify-content:center;padding:8px 0;cursor:pointer}
-.sidebar.expanded .role-toggle-mini{display:none}
-.role-toggle-full{display:none;align-items:center;gap:6px;padding:6px 12px;font-size:11px;color:#666;cursor:pointer;border-radius:8px;margin:0 6px}
-.sidebar.expanded .role-toggle-full{display:flex}
-.role-toggle-full:hover{background:#f5f5f5}
+.user-area{margin-top:auto;padding:8px 0;border-top:.5px solid #e8e8e8;flex-shrink:0;position:sticky;bottom:0;background:#fff;z-index:10}
+.role-toggle-mini{display:none!important}
+.role-toggle-full{display:none!important}
+.toggle-pill{display:none!important}
 .toggle-pill{width:28px;height:15px;border-radius:8px;position:relative;transition:background .2s;flex-shrink:0}
 .toggle-pill::after{content:'';position:absolute;width:11px;height:11px;background:#fff;border-radius:50%;top:2px;transition:left .2s}
 .toggle-pill.staff{background:#ccc}.toggle-pill.staff::after{left:2px}
@@ -138,6 +136,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
 .drum-arrow{font-size:8px;color:#aaa;line-height:1}
 .drum-popup{display:none;position:absolute;bottom:38px;left:50%;transform:translateX(-50%);width:70px;background:#fff;border:.5px solid #ddd;border-radius:10px;z-index:200;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.12)}
 .drum-popup.open{display:block}
+.drum-popup.drop-down{bottom:auto;top:38px}
 .drum-list{max-height:180px;overflow-y:auto}
 .drum-list::-webkit-scrollbar{width:3px}
 .drum-list::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
@@ -300,7 +299,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
 .manual-chev{font-size:12px;color:#aaa;flex-shrink:0}
 .manual-detail{display:none;border-top:.5px solid #eee}
 .manual-detail.open{display:block}
-.recipe-photo{width:100%;aspect-ratio:4/3;background:#f0f0ea;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;position:relative}
+.recipe-photo{width:50%;aspect-ratio:4/3;background:#f0f0ea;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;position:relative}
 .photo-placeholder-icon{font-size:24px;opacity:.4}
 .photo-placeholder-text{font-size:11px;color:#aaa}
 .photo-upload-btn{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.45);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer}
@@ -336,6 +335,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
 .photo-upload-area:hover{border-color:#1D9E75;background:#E1F5EE}
 .photo-upload-icon{font-size:20px;margin-bottom:4px;opacity:.5}
 .photo-upload-text{font-size:12px;color:#aaa}
+.badge-edited{background:#FFF3E0;color:#E65100;border:.5px solid #FFB74D}
 .save-toast{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;z-index:400;white-space:nowrap}
 .save-toast.show{display:block}
 
@@ -392,7 +392,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
   </div>
   <div class="nav-section">
     <div class="nav-label">情報</div>
-    <div class="nav-item" data-page="notice"><span class="nav-icon">📢</span><span class="nav-text">業務連絡</span><span class="nav-badge">2</span></div>
+    <div class="nav-item" data-page="notice"><span class="nav-icon">📢</span><span class="nav-text">業務連絡</span></div>
     <div class="nav-item" data-page="manual"><span class="nav-icon">📖</span><span class="nav-text">マニュアル</span></div>
   </div>
   <div class="nav-section admin-nav" id="admin-nav">
@@ -402,17 +402,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
     <div class="nav-item" data-page="admin-stocktake"><span class="nav-icon">📦</span><span class="nav-text">棚卸一覧</span></div>
     <div class="nav-item" data-page="admin-notice-add"><span class="nav-icon">📣</span><span class="nav-text">業務連絡 追加</span></div>
     <div class="nav-item" data-page="admin-manual"><span class="nav-icon">✏️</span><span class="nav-text">マニュアル編集</span></div>
+    <div class="nav-item" data-page="admin-staff"><span class="nav-icon">👥</span><span class="nav-text">スタッフ管理</span></div>
   </div>
   <div class="user-area">
-    <div class="role-toggle-mini" onclick="toggleAdmin()">
-      <div class="toggle-pill staff" id="admin-toggle-mini" style="width:22px;height:12px"></div>
-    </div>
-    <div class="role-toggle-full" onclick="toggleAdmin()">
-      <div class="toggle-pill staff" id="admin-toggle-full"></div>
-      <span id="role-label">スタッフ表示</span>
-    </div>
-    <div class="user-card-mini"><div class="avatar" id="avatar-mini" style="background:#E1F5EE;color:#0F6E56;width:28px;height:28px;font-size:10px">田中</div></div>
-    <div class="user-card-full"><div class="avatar" id="avatar-full" style="background:#E1F5EE;color:#0F6E56">田中</div><div><div class="user-name" id="user-name-full">田中 葵</div><div class="user-role" id="user-role-full">スタッフ</div></div></div>
+    <div class="user-card-mini"><div class="avatar" id="avatar-mini" style="background:#E1F5EE;color:#0F6E56;width:28px;height:28px;font-size:10px;cursor:pointer" onclick="openStaffSelectModal()">田中</div></div>
+    <div class="user-card-full" style="cursor:pointer" onclick="openStaffSelectModal()"><div class="avatar" id="avatar-full" style="background:#E1F5EE;color:#0F6E56">田中</div><div><div class="user-name" id="user-name-full">田中 葵</div><div class="user-role" id="user-role-full">スタッフ</div></div></div>
   </div>
 </div>
 
@@ -420,7 +414,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
 <div class="main">
   <div class="topbar">
     <div class="page-title" id="page-title">ダッシュボード</div>
-    <div class="topbar-date">2026年4月4日（土）</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span id="sync-status" style="font-size:10px;color:#0F6E56"></span>
+      <button onclick="syncNow()" title="スプレッドシートと同期" style="background:none;border:none;font-size:18px;cursor:pointer;padding:2px;line-height:1;opacity:0.7" id="sync-btn">☁️</button>
+      <div class="topbar-date" id="topbar-date"></div>
+    </div>
   </div>
   <div class="content" id="main-content">
 
@@ -443,23 +441,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
     <div class="card">
       <div class="card-title">📝 日報報告</div>
       <div class="section-label-sm">基本情報</div>
-      <div class="grid-2">
-        <div class="form-group"><label class="form-label">報告者名</label><input class="form-input" type="text" placeholder="例：田中 葵"></div>
-        <div class="form-group"><label class="form-label">天気</label><select class="form-input form-select"><option value="" disabled selected>選択してください</option><option>☀️ 晴れ</option><option>⛅ 曇り</option><option>🌧️ 雨</option><option>❄️ 雪</option></select></div>
+      <div class="form-group">
+        <label class="form-label">報告日</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input class="form-input" type="date" id="daily-report-date" style="flex:1">
+          <button class="btn" id="daily-today-btn" onclick="setDailyToday()" style="white-space:nowrap;padding:9px 12px;font-size:12px;color:#0F6E56;border-color:#1D9E75">今日</button>
+        </div>
       </div>
       <div class="grid-2">
-        <div class="form-group"><label class="form-label">担当シフト</label><select class="form-input form-select"><option value="" disabled selected>選択してください</option><option>開け担当</option><option>中番担当</option><option>閉め担当</option></select></div>
-        <div class="form-group"><label class="form-label">両替金額</label><div style="display:flex;align-items:center;gap:6px"><input class="form-input" type="number" placeholder="50000"><span style="font-size:13px;color:#666;white-space:nowrap">円</span></div></div>
+        <div class="form-group"><label class="form-label">報告者名</label><input class="form-input" type="text" id="daily-reporter-name" placeholder="例：田中 葵"></div>
+        <div class="form-group"><label class="form-label">天気</label><select class="form-input form-select" id="daily-weather"><option value="" disabled selected>選択してください</option><option>☀️ 晴れ</option><option>⛅ 曇り</option><option>🌧️ 雨</option><option>❄️ 雪</option></select></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">担当シフト</label><select class="form-input form-select" id="daily-shift"><option value="" disabled selected>選択してください</option><option>開け担当</option><option>中番担当</option><option>閉め担当</option></select></div>
+        <div class="form-group"><label class="form-label">両替金額</label><div style="display:flex;align-items:center;gap:6px"><input class="form-input" type="number" id="daily-ryogae" placeholder="50000"><span style="font-size:13px;color:#666;white-space:nowrap">円</span></div></div>
       </div>
       <div class="divider"></div>
       <div class="section-label-sm">お客様情報</div>
-      <div class="form-group"><label class="form-label">常連さん・リピーターに関わること</label><textarea class="form-input form-textarea" placeholder="例：〇〇さんが久しぶりにご来店。いつものドリップコーヒーを注文。"></textarea></div>
-      <div class="form-group"><label class="form-label">お客様の入店傾向</label><textarea class="form-input form-textarea" style="min-height:65px" placeholder="例：午前中は少なめで、14時以降に混雑。テイクアウトの割合が多かった。"></textarea></div>
+      <div class="form-group"><label class="form-label">常連さん・リピーターに関わること</label><textarea class="form-input form-textarea" id="daily-regular" placeholder="例：〇〇さんが久しぶりにご来店。いつものドリップコーヒーを注文。"></textarea></div>
+      <div class="form-group"><label class="form-label">お客様の入店傾向</label><textarea class="form-input form-textarea" style="min-height:65px" id="daily-trend" placeholder="例：午前中は少なめで、14時以降に混雑。テイクアウトの割合が多かった。"></textarea></div>
       <div class="divider"></div>
       <div class="section-label-sm">イベント・その他</div>
-      <div class="form-group"><label class="form-label">ワークショップ・イベントの特記事項</label><textarea class="form-input form-textarea" style="min-height:65px" placeholder="例：13時のラテアートワークショップ、参加者5名。"></textarea></div>
-      <div class="form-group"><label class="form-label">その他・特記事項</label><textarea class="form-input form-textarea" style="min-height:65px" placeholder="トラブル、設備の異常など"></textarea></div>
-      <button class="btn-primary" onclick="showSuccess('daily-success')">日報を提出する</button>
+      <div class="form-group"><label class="form-label">ワークショップ・イベントの特記事項</label><textarea class="form-input form-textarea" style="min-height:65px" id="daily-event" placeholder="例：13時のラテアートワークショップ、参加者5名。"></textarea></div>
+      <div class="form-group"><label class="form-label">その他・特記事項</label><textarea class="form-input form-textarea" style="min-height:65px" id="daily-other" placeholder="トラブル、設備の異常など"></textarea></div>
+      <button class="btn-primary" onclick="submitDailyReport()">日報を提出する</button>
       <div class="submit-success" id="daily-success">✓ 日報を提出しました。お疲れ様でした！</div>
     </div>
   </div>
@@ -469,7 +474,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
     <div class="notice-box-gray">📌 ドリンクは<strong>未開封の在庫</strong>を、フードは<strong>冷凍の在庫</strong>を報告してください。</div>
     <div class="section-card"><div id="inv-all-list"></div></div>
     <div class="section-card"><div style="padding:12px 14px"><label class="form-label">備考・特記事項</label><textarea class="form-input form-textarea" placeholder="在庫についての特記事項があれば記入してください"></textarea></div></div>
-    <button class="btn-primary" onclick="showSuccess('inv-success')">在庫報告を提出する</button>
+    <button class="btn-primary" onclick="submitInventory()">在庫報告を提出する</button>
     <div class="submit-success" id="inv-success">✓ 在庫報告を提出しました。</div>
   </div>
 
@@ -482,7 +487,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
       <div style="padding:8px 14px"><button class="btn" onclick="addOrderRow()" style="width:100%;color:#666;font-size:12px">＋ 商品を追加</button></div>
     </div>
     <div class="section-card"><div style="padding:12px 14px"><label class="form-label">補足</label><textarea class="form-input form-textarea" style="min-height:65px" placeholder="補足があれば記入してください"></textarea></div></div>
-    <button class="btn-primary" onclick="showSuccess('order-req-success')">発注依頼を送信する</button>
+    <button class="btn-primary" onclick="submitOrderRequest()">発注依頼を送信する</button>
     <div class="submit-success" id="order-req-success">✓ 発注依頼を送信しました。管理者が確認します。</div>
   </div>
 
@@ -494,7 +499,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
       <div class="form-group"><label class="form-label">棚卸日時</label><input class="form-input" type="datetime-local" id="st-date"></div>
       <div class="form-group"><label class="form-label">棚卸担当者名</label><input class="form-input" type="text" value="田中 葵"></div>
     </div>
-    <button class="btn-primary" onclick="showSuccess('st-success')">棚卸を完了する</button>
+    <button class="btn-primary" onclick="submitStocktake()">棚卸を完了する</button>
     <div class="submit-success" id="st-success">✓ 棚卸データを提出しました。</div>
   </div>
 
@@ -516,43 +521,40 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
       <div id="manual-recipe-drink"><div id="manual-drink-list"></div></div>
       <div id="manual-recipe-food" style="display:none"><div id="manual-food-list"></div></div>
     </div>
-    <div id="manual-tab-openclose" style="display:none">
-      <div class="manual-item"><div class="manual-head" onclick="toggleManual(this)"><div style="flex:1"><div class="manual-title">🌅 オープン手順</div><div class="manual-meta-text">所要時間：約30分</div></div><span class="manual-chev">›</span></div><div class="manual-detail"><div class="steps-wrap"><div class="step-item"><div class="step-num">1</div>シャッター解除・照明ON</div><div class="step-item"><div class="step-num">2</div>マシン電源ON（15分ウォームアップ）</div><div class="step-item"><div class="step-num">3</div>冷蔵庫温度確認・食材チェック</div><div class="step-item"><div class="step-num">4</div>清掃・テーブルセッティング</div><div class="step-item"><div class="step-num">5</div>レジ起動・釣銭確認（¥50,000）</div><div class="step-item"><div class="step-num">6</div>試飲で確認・オープン完了</div></div></div></div>
-      <div class="manual-item"><div class="manual-head" onclick="toggleManual(this)"><div style="flex:1"><div class="manual-title">🌙 クローズ手順</div><div class="manual-meta-text">所要時間：約45分</div></div><span class="manual-chev">›</span></div><div class="manual-detail"><div class="steps-wrap"><div class="step-item"><div class="step-num">1</div>ラストオーダー・サービス終了</div><div class="step-item"><div class="step-num">2</div>バックフラッシュ実施</div><div class="step-item"><div class="step-num">3</div>食材冷蔵庫格納</div><div class="step-item"><div class="step-num">4</div>レジ締め・日報記入</div><div class="step-item"><div class="step-num">5</div>施錠確認・退店</div></div></div></div>
-    </div>
-    <div id="manual-tab-cleaning" style="display:none">
-      <div class="manual-item"><div class="manual-head" onclick="toggleManual(this)"><div style="flex:1"><div class="manual-title">🧹 日常清掃チェックリスト</div><div class="manual-meta-text">毎日実施</div></div><span class="manual-chev">›</span></div><div class="manual-detail"><div class="steps-wrap"><div class="step-item"><div class="step-num">1</div>カウンター・テーブルの拭き上げ</div><div class="step-item"><div class="step-num">2</div>床の掃き掃除・モップがけ</div><div class="step-item"><div class="step-num">3</div>トイレ清掃</div><div class="step-item"><div class="step-num">4</div>ゴミ箱の確認・交換</div></div></div></div>
-      <div class="manual-item"><div class="manual-head" onclick="toggleManual(this)"><div style="flex:1"><div class="manual-title">🧼 マシン周りの清掃</div><div class="manual-meta-text">毎日クローズ時</div></div><span class="manual-chev">›</span></div><div class="manual-detail"><div class="steps-wrap"><div class="step-item"><div class="step-num">1</div>グループヘッドのブラッシング</div><div class="step-item"><div class="step-num">2</div>ポルタフィルターの洗浄</div><div class="step-item"><div class="step-num">3</div>スチームワンドの拭き上げ</div><div class="step-item"><div class="step-num">4</div>ドリップトレイの洗浄</div></div></div></div>
-    </div>
-    <div id="manual-tab-machine" style="display:none">
-      <div class="manual-item"><div class="manual-head" onclick="toggleManual(this)"><div style="flex:1"><div class="manual-title">⚙️ エスプレッソマシン 日常操作</div><div class="manual-meta-text">La Marzocco Linea Mini</div></div><span class="manual-chev">›</span></div><div class="manual-detail"><div class="steps-wrap"><div class="step-item"><div class="step-num">1</div>電源ON → 15分ウォームアップ</div><div class="step-item"><div class="step-num">2</div>空抽出で温度確認</div><div class="step-item"><div class="step-num">3</div>コーヒー粉18g充填・タンピング</div><div class="step-item"><div class="step-num">4</div>25〜30秒で約60ml抽出</div></div></div></div>
-      <div class="manual-item"><div class="manual-head" onclick="toggleManual(this)"><div style="flex:1"><div class="manual-title">🧼 バックフラッシュ手順</div><div class="manual-meta-text">毎日クローズ時に実施</div></div><span class="manual-chev">›</span></div><div class="manual-detail"><div class="steps-wrap"><div class="step-item"><div class="step-num">1</div>ブラインドフィルターをセット</div><div class="step-item"><div class="step-num">2</div>洗剤（Puly Caff）1g投入</div><div class="step-item"><div class="step-num">3</div>10秒ON → 5秒OFF × 5回</div><div class="step-item"><div class="step-num">4</div>洗剤なしで2回すすぎ</div></div></div></div>
-    </div>
-    <div id="manual-tab-operation" style="display:none">
-      <div class="manual-item"><div class="manual-head" onclick="toggleManual(this)"><div style="flex:1"><div class="manual-title">👥 接客の基本フロー</div><div class="manual-meta-text">入店〜退店まで</div></div><span class="manual-chev">›</span></div><div class="manual-detail"><div class="steps-wrap"><div class="step-item"><div class="step-num">1</div>入店時にご挨拶</div><div class="step-item"><div class="step-num">2</div>席のご案内・メニューをお渡し</div><div class="step-item"><div class="step-num">3</div>ご注文を伺い復唱確認</div><div class="step-item"><div class="step-num">4</div>ドリンク・フードの提供</div><div class="step-item"><div class="step-num">5</div>お会計・お見送り</div></div></div></div>
-      <div class="manual-item"><div class="manual-head" onclick="toggleManual(this)"><div style="flex:1"><div class="manual-title">📦 テイクアウト対応</div><div class="manual-meta-text">包装・提供手順</div></div><span class="manual-chev">›</span></div><div class="manual-detail"><div class="steps-wrap"><div class="step-item"><div class="step-num">1</div>テイクアウト用カップ・リッドを確認</div><div class="step-item"><div class="step-num">2</div>ドリンクをカップに注ぎリッドを閉める</div><div class="step-item"><div class="step-num">3</div>スリーブを装着（ホットの場合）</div><div class="step-item"><div class="step-num">4</div>ショッパーに入れてお渡し</div></div></div></div>
-    </div>
-    <div id="manual-tab-register" style="display:none">
-      <div class="manual-item"><div class="manual-head" onclick="toggleManual(this)"><div style="flex:1"><div class="manual-title">💳 お会計の手順</div><div class="manual-meta-text">現金・カード・QR対応</div></div><span class="manual-chev">›</span></div><div class="manual-detail"><div class="steps-wrap"><div class="step-item"><div class="step-num">1</div>レジにオーダーを入力</div><div class="step-item"><div class="step-num">2</div>金額をお客様に提示</div><div class="step-item"><div class="step-num">3</div>現金・カード・QRで決済</div><div class="step-item"><div class="step-num">4</div>領収書が必要か確認</div></div></div></div>
-      <div class="manual-item"><div class="manual-head" onclick="toggleManual(this)"><div style="flex:1"><div class="manual-title">🏧 レジ締め手順</div><div class="manual-meta-text">クローズ時に実施</div></div><span class="manual-chev">›</span></div><div class="manual-detail"><div class="steps-wrap"><div class="step-item"><div class="step-num">1</div>レジ内の現金を確認・計算</div><div class="step-item"><div class="step-num">2</div>売上レポートを確認</div><div class="step-item"><div class="step-num">3</div>差異がある場合は責任者に報告</div><div class="step-item"><div class="step-num">4</div>翌日用の釣銭（¥50,000）をセット</div></div></div></div>
-    </div>
+    <div id="manual-tab-openclose" style="display:none"><div id="manual-openclose-list"></div></div>
+    <div id="manual-tab-cleaning" style="display:none"><div id="manual-cleaning-list"></div></div>
+    <div id="manual-tab-machine" style="display:none"><div id="manual-machine-list"></div></div>
+    <div id="manual-tab-operation" style="display:none"><div id="manual-operation-list"></div></div>
+    <div id="manual-tab-register" style="display:none"><div id="manual-register-list"></div></div>
   </div>
 
   <!-- ADMIN REPORTS -->
   <div class="page" id="page-admin-reports">
-    <div class="tab-bar">
-      <div class="tab active" onclick="switchInnerTab(this,'admin-rep-daily')">日報</div>
-      <div class="tab" onclick="switchInnerTab(this,'admin-rep-inv')">在庫報告</div>
-    </div>
-    <div id="admin-rep-daily"><div id="admin-daily-list"></div></div>
-    <div id="admin-rep-inv" style="display:none">
-      <div class="alert-banner">⚠️ エスプレッソ豆（0.8kg）、牛乳（6L）が最低在庫を下回っています</div>
-      <div class="card"><div class="card-title">📦 本日の在庫報告</div>
-        <div class="list-item"><div class="item-info"><div class="item-title">エスプレッソ豆</div><div class="item-sub">0.8kg ／ 田中 葵 08:30</div></div><span class="badge badge-urgent">要発注</span></div>
-        <div class="list-item"><div class="item-info"><div class="item-title">牛乳</div><div class="item-sub">6L ／ 田中 葵 08:30</div></div><span class="badge badge-urgent">要発注</span></div>
-        <div class="list-item"><div class="item-info"><div class="item-title">シフォン</div><div class="item-sub">3個 ／ 鈴木 健太 13:15</div></div><span class="badge badge-info">注意</span></div>
+    <!-- 操作バー -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">📋 日報の操作</div>
+      <div class="section-label-sm">期間を選択</div>
+      <div class="grid-2" style="margin-bottom:10px">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">開始日</label>
+          <input type="date" class="form-input" id="report-date-from">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">終了日</label>
+          <input type="date" class="form-input" id="report-date-to">
+        </div>
       </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px" onclick="exportReportCSV()">
+          <span>📥</span><span>CSVで書き出す</span>
+        </button>
+        <button class="btn" style="color:#712B13;border-color:#F09595;background:#FAECE7;padding:10px 14px;font-size:13px" onclick="openDeleteReportModal()">
+          🗑 削除
+        </button>
+      </div>
+      <div style="font-size:11px;color:#aaa;margin-top:8px">※ 期間未選択の場合は全件対象</div>
     </div>
+    <div id="admin-daily-list"></div>
   </div>
 
   <!-- ADMIN ORDERS -->
@@ -562,7 +564,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
       <div class="tab" onclick="switchInnerTab(this,'admin-order-irreg')">不定期発注</div>
     </div>
     <div id="admin-order-daily">
-      <div class="info-box">📌 最終更新：本日 13:15 鈴木 健太</div>
+      <div class="info-box" id="daily-order-info-box">📌 最終更新：－</div>
       <div class="section-card"><div class="section-head"><span style="font-size:15px">🥤</span><span class="section-head-title">ドリンク</span></div><div id="admin-daily-drink"></div></div>
       <div class="section-card"><div class="section-head"><span style="font-size:15px">🍽️</span><span class="section-head-title">フード</span></div><div id="admin-daily-food"></div></div>
     </div>
@@ -594,6 +596,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
 
   <!-- ADMIN NOTICE ADD -->
   <div class="page" id="page-admin-notice-add">
+    <div class="tab-bar" id="notice-add-tabs">
+      <div class="tab active" onclick="switchNoticeAddTab(this,'notice-new-post')">新規投稿</div>
+      <div class="tab" onclick="switchNoticeAddTab(this,'notice-edit-list')">投稿内容編集</div>
+    </div>
+
+    <!-- 新規投稿 -->
+    <div id="notice-new-post">
     <div class="card">
       <div class="card-title">📣 新規投稿</div>
       <div class="section-label-sm">基本設定</div>
@@ -636,6 +645,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
       </div>
       <div class="submit-success" id="notice-post-success">✓ 投稿しました！スタッフに通知されます。</div>
     </div>
+    </div>
+
+    <!-- 投稿内容編集 -->
+    <div id="notice-edit-list" style="display:none">
+      <div id="notice-edit-items"></div>
+    </div>
+  </div>
+
+  <!-- 業務連絡編集モーダル -->
+  <div class="modal-overlay" id="notice-edit-modal">
+    <div class="modal">
+      <div class="modal-title"><span id="notice-edit-modal-title">投稿を編集</span><button class="modal-close" onclick="closeNoticeEditModal()">×</button></div>
+      <div class="form-group"><label class="form-label">バッジ</label><select class="form-input form-select" id="notice-edit-badge"><option value="important">重要</option><option value="share">共有</option><option value="info">お知らせ</option></select></div>
+      <div class="form-group"><label class="form-label">タイトル</label><input class="form-input" type="text" id="notice-edit-title"></div>
+      <div class="form-group"><label class="form-label">本文</label><textarea class="form-input form-textarea" id="notice-edit-body"></textarea></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeNoticeEditModal()">キャンセル</button>
+        <button class="btn-save" onclick="saveNoticeEdit()">編集完了</button>
+      </div>
+    </div>
   </div>
 
   <!-- ADMIN MANUAL EDIT -->
@@ -660,6 +689,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
     <div id="admin-manual-register" style="display:none"><div class="cat-header"><span class="cat-title-edit">レジ/お会計（2項目）</span><button class="btn-add" onclick="openManualAdd('register')">＋ 追加</button></div><div id="admin-register-list"></div></div>
   </div>
 
+  <!-- ADMIN STAFF -->
+  <div class="page" id="page-admin-staff">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:500;color:#666">スタッフ一覧</div>
+      <button class="btn-add" onclick="openStaffAddModal()">＋ 追加</button>
+    </div>
+    <div id="admin-staff-list"></div>
+    <hr class="divider" style="margin-top:24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:#666;margin-bottom:2px">☁️ スプレッドシート連携</div>
+        <div id="gas-url-display" style="font-size:11px;color:#aaa"></div>
+      </div>
+      <button class="btn-edit" onclick="openGasSettingModal()">設定</button>
+    </div>
+  </div>
+
   </div>
 </div>
 </div>
@@ -673,6 +719,97 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
       <button class="btn-delete" id="manual-modal-delete" style="display:none" onclick="deleteManualItem()">削除</button>
       <button class="btn-cancel" onclick="closeManualModal()">キャンセル</button>
       <button class="btn-save" id="manual-modal-save" onclick="saveManualItem()">追加する</button>
+    </div>
+  </div>
+</div>
+
+<!-- STAFF SELECT MODAL -->
+<div class="modal-overlay" id="staff-select-modal">
+  <div class="modal" style="max-width:340px">
+    <div class="modal-title"><span>スタッフを選択</span><button class="modal-close" onclick="closeStaffSelectModal()">×</button></div>
+    <div id="staff-select-list"></div>
+  </div>
+</div>
+
+<!-- STAFF MANAGE MODAL (管理者用) -->
+<div class="modal-overlay" id="staff-manage-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title"><span id="staff-manage-title">スタッフ情報</span><button class="modal-close" onclick="closeStaffManageModal()">×</button></div>
+    <div class="form-group"><label class="form-label">名前</label><input class="form-input" type="text" id="sm-name"></div>
+    <div class="form-group"><label class="form-label">役割</label><select class="form-input form-select" id="sm-role"><option value="staff">スタッフ</option><option value="admin">管理者</option></select></div>
+    <div class="modal-actions">
+      <button class="btn-delete" id="sm-delete" onclick="deleteStaffMember()" style="display:none">削除</button>
+      <button class="btn-cancel" onclick="closeStaffManageModal()">キャンセル</button>
+      <button class="btn-save" onclick="saveStaffMember()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 汎用確認モーダル -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal" style="max-width:320px">
+    <div style="font-size:14px;font-weight:500;color:#1a1a1a;margin-bottom:8px" id="confirm-modal-title">確認</div>
+    <div style="font-size:13px;color:#555;line-height:1.6;margin-bottom:20px" id="confirm-modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="confirm-modal-cancel">キャンセル</button>
+      <button class="btn-delete" id="confirm-modal-ok">削除する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 日報削除確認モーダル -->
+<div class="modal-overlay" id="delete-report-modal">
+  <div class="modal" style="max-width:340px">
+    <div class="modal-title">
+      <span>🗑 日報を削除</span>
+      <button class="modal-close" onclick="closeDeleteReportModal()">×</button>
+    </div>
+    <div style="font-size:12px;color:#666;margin-bottom:12px;line-height:1.6">削除する期間を指定してください。<br>期間未指定の場合は全件削除されます。</div>
+    <div class="grid-2" style="margin-bottom:14px">
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">開始日</label>
+        <input type="date" class="form-input" id="delete-date-from">
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">終了日</label>
+        <input type="date" class="form-input" id="delete-date-to">
+      </div>
+    </div>
+    <div id="delete-report-preview" style="background:#FAECE7;border:.5px solid #F09595;border-radius:8px;padding:10px 12px;font-size:12px;color:#712B13;margin-bottom:14px;display:none"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeDeleteReportModal()">キャンセル</button>
+      <button class="btn-delete" onclick="confirmDeleteReport()">削除する</button>
+    </div>
+  </div>
+</div>
+
+<!-- GAS URL 設定モーダル -->
+<div class="modal-overlay" id="gas-setting-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">
+      <span>☁️ スプレッドシート連携設定</span>
+      <button class="modal-close" onclick="closeGasSettingModal()">×</button>
+    </div>
+    <div style="font-size:12px;color:#666;line-height:1.8;margin-bottom:14px">
+      Google Apps ScriptのウェブアプリURLを入力してください。<br>
+      設定後、全データが自動的に保存・読み込みされます。
+    </div>
+    <div class="form-group">
+      <label class="form-label">ウェブアプリURL</label>
+      <input class="form-input" type="url" id="gas-url-input" placeholder="https://script.google.com/macros/s/...">
+    </div>
+    <div id="gas-test-result" style="font-size:12px;margin-bottom:10px;display:none"></div>
+    <div style="font-size:11px;color:#aaa;background:#f5f5f0;border-radius:8px;padding:10px 12px;margin-bottom:14px;line-height:1.7">
+      <strong style="color:#666">設定手順：</strong><br>
+      ① Googleスプレッドシートを新規作成<br>
+      ② 「拡張機能」→「Apps Script」でコードを貼り付け<br>
+      ③ 「デプロイ」→「新しいデプロイ」→種類「ウェブアプリ」<br>
+      ④ アクセス権を「全員」にして「デプロイ」<br>
+      ⑤ 発行されたURLをここに貼り付け
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeGasSettingModal()">キャンセル</button>
+      <button class="btn-save" onclick="saveGasUrl()">接続する</button>
     </div>
   </div>
 </div>
@@ -691,10 +828,47 @@ const drinks=[{t:'standard',n:'本日のコーヒー'},{t:'standard',n:'カプ�
 const foods=[{t:'standard',n:'＆chiffonホール'},{t:'standard',n:'ショコラテリーヌ'},{t:'standard',n:'カヌレ'},{t:'standard',n:'カヌレ バニラアイスのせ'},{t:'standard',n:'ホットサンド単品'},{t:'standard',n:'ホットサンド ドリンクセット'},{t:'standard',n:'バニラアイス'},{t:'standard',n:'アフォガード'},{t:'standard',n:'ほうじ茶アフォガード'},{t:'standard',n:'プレーンクッキー【単品】'},{t:'standard',n:'チョコチップクッキー【単品】'},{t:'limited',n:'抹茶テリーヌ'},{t:'limited',n:'ほうじ茶テリーヌ'},{t:'limited',n:'いちごショコラテリーヌ'},{t:'limited',n:'シュトーレン1本'},{t:'limited',n:'まっちゃもちドーム'},{t:'limited',n:'りんごさつまいもかぼちゃのタルト'},{t:'limited',n:'クッキーサンド'},{t:'limited',n:'カボチャのチーズケーキ'},{t:'limited',n:'雪だるまアップルパイ アイスのせ'},{t:'limited',n:'雪だるまアップルパイ'},{t:'limited',n:'マロンボール'},{t:'limited',n:'スコーンサンドウィッチ'},{t:'limited',n:'ブルーベリータルト'},{t:'limited',n:'いちごのチーズケーキ'},{t:'limited',n:'チーズケーキ'},{t:'limited',n:'カラメルフルーツケーキ'},{t:'limited',n:'りんごのタルト'},{t:'limited',n:'カラメルラムレーズンチーズケーキ'},{t:'limited',n:'レモンドーナツ'},{t:'limited',n:'ラムボール'},{t:'limited',n:'さくらチーズケーキ'},{t:'limited',n:'バナナタルト'},{t:'limited',n:'抹茶カヌレ'},{t:'limited',n:'抹茶カヌレ 抹茶アイスのせ'},{t:'limited',n:'まっちゃづくしセット'},{t:'limited',n:'まっちゃづくしセット【バニラ変更】'},{t:'limited',n:'りんごタルト'},{t:'limited',n:'チョコタルト'},{t:'limited',n:'ブラウニー'}];
 let irregOrders=[{id:1,date:'2026/4/4',reporter:'田中 葵',category:'コーヒー豆関係',item:'エスプレッソ豆（JR）',note:'在庫0.8kgのため至急',orderedAt:null},{id:2,date:'2026/4/4',reporter:'鈴木 健太',category:'シロップ／ソース',item:'チョコレートソース（トラーニ）',note:'',orderedAt:null},{id:3,date:'2026/4/3',reporter:'中村 美咲',category:'カップ／リッド／ストロー',item:'アイスMカップ（サンナップ）',note:'次回定期発注に追加',orderedAt:new Date(2026,3,3,15,0)}];
 const noticeData=[{id:1,badge:'重要',badgeClass:'badge-important',title:'週末の特別営業について',time:'本日 09:15',author:'店長 山田',text:'今週末（4/5・4/6）は周辺イベントの影響により特別営業となります。\n\n・開店時間：8:00（通常9:00）\n・閉店時間：21:00（変更なし）\n・臨時スタッフが1名入ります\n\n準備のため、オープン担当は7:30に出勤をお願いします。',confirmed:[{initials:'鈴木',color:'#FAEEDA',textColor:'#633806'},{initials:'中村',color:'#FAECE7',textColor:'#712B13'}]},{id:2,badge:'お知らせ',badgeClass:'badge-info',title:'夏季限定メニュー開始のお知らせ',time:'昨日 17:30',author:'副店長 佐藤',text:'来週月曜（4/7）より夏季限定メニューを開始します。\n\n・アイスメロンラテ ¥680\n・クールミントコーヒー ¥620\n・フローズンキャラメルマキアート ¥750\n\nレシピはマニュアルに追加済みです。',confirmed:[]},{id:3,badge:'済',badgeClass:'badge-done',title:'エスプレッソマシン定期メンテについて',time:'3日前',author:'店長 山田',text:'4月1日の定期メンテナンスが完了しました。引き続き毎日のバックフラッシュをお願いします。',confirmed:[{initials:'田中',color:'#E1F5EE',textColor:'#0F6E56'},{initials:'鈴木',color:'#FAEEDA',textColor:'#633806'}]}];
-const myConfirmed={1:false,2:false,3:true};
+// スタッフごとの確認状態: {staffId: {noticeId: bool}}
+const confirmedByStaff={
+  1:{1:false,2:false,3:true},  // 田中：3は確認済み
+  2:{1:true, 2:false,3:true},  // 鈴木
+  3:{1:true, 2:false,3:false}, // 中村
+  4:{1:false,2:false,3:false}, // 山田
+};
+function myConfirmedFor(noticeId){
+  const sc=confirmedByStaff[currentStaffId];
+  return sc?!!sc[noticeId]:false;
+}
+function setMyConfirmed(noticeId){
+  if(!confirmedByStaff[currentStaffId])confirmedByStaff[currentStaffId]={};
+  confirmedByStaff[currentStaffId][noticeId]=true;
+}
 const noticeOpen={};const limitedOpen={};const archiveOpen={};const monthOpenState={};const adminDailyOpen={};const adminShiftOpen={};const stCatOpen={};
 let isAdmin=false;let sidebarExpanded=false;
-const pageTitles={dashboard:'ダッシュボード','daily-report':'日報報告',inventory:'在庫報告','order-request':'発注依頼',stocktake:'棚卸',notice:'業務連絡',manual:'マニュアル','admin-reports':'報告一覧','admin-orders':'発注管理','admin-stocktake':'棚卸一覧','admin-notice-add':'業務連絡 追加','admin-manual':'マニュアル編集'};
+
+// ===== SHARED STORE =====
+// スタッフリスト
+const staffList=[
+  {id:1,name:'田中 葵',initials:'田中',role:'staff',color:'#E1F5EE',textColor:'#0F6E56'},
+  {id:2,name:'鈴木 健太',initials:'鈴木',role:'staff',color:'#FAEEDA',textColor:'#633806'},
+  {id:3,name:'中村 美咲',initials:'中村',role:'staff',color:'#FAECE7',textColor:'#712B13'},
+  {id:4,name:'山田 店長',initials:'山田',role:'admin',color:'#EEEDFE',textColor:'#3C3489'},
+];
+let currentStaffId=1;
+function currentStaff(){return staffList.find(s=>s.id===currentStaffId)||staffList[0];}
+
+// 日報提出データ
+const submittedReports=[];
+// 不定期発注（スタッフ提出分はここに追加）
+// irregOrders は既存のものを使用
+// 棚卸提出データ
+let submittedStocktake=null;
+// 業務連絡投稿データ（管理者追加分）
+// noticeData は既存のものを使用（後で管理者投稿も同配列に追加）
+// 在庫報告の最新提出データ
+let latestInventorySubmission=null;
+
+const pageTitles={dashboard:'ダッシュボード','daily-report':'日報報告',inventory:'在庫報告','order-request':'発注依頼',stocktake:'棚卸',notice:'業務連絡',manual:'マニュアル','admin-reports':'報告一覧','admin-orders':'発注管理','admin-stocktake':'棚卸一覧','admin-notice-add':'業務連絡 追加','admin-manual':'マニュアル編集','admin-staff':'スタッフ管理'};
 const dashNotices=[{badge:'重要',badgeClass:'badge-important',title:'週末の特別営業について',time:'本日 09:15',author:'店長 山田',text:'今週末は特別営業。開店8:00、臨時スタッフ1名入ります。'},{badge:'お知らせ',badgeClass:'badge-info',title:'夏季限定メニュー開始のお知らせ',time:'昨日 17:30',author:'副店長 佐藤',text:'来週月曜より夏季限定メニュー3品を開始します。レシピはマニュアルに追加済みです。'},{badge:'済',badgeClass:'badge-done',title:'エスプレッソマシン定期メンテについて',time:'3日前',author:'店長 山田',text:'定期メンテ完了。引き続き毎日のバックフラッシュをお願いします。'}];
 const dashLimited=[{status:'開催中',sc:'status-active',title:'夏季限定メニュー',period:'4/7〜6/30',text:'アイスメロンラテ・クールミントコーヒー・フローズンキャラメルマキアートの3品を提供中。',ended:false},{status:'予定',sc:'status-upcoming',title:'ラテアートワークショップ',period:'4/12（土）13:00〜15:00',text:'毎月第2土曜に開催。参加者上限6名。予約は店頭または電話にて。',ended:false},{status:'予定',sc:'status-upcoming',title:'ゴールデンウィーク特別営業',period:'4/29〜5/6',text:'GW期間中は全日8:00オープン・22:00クローズの延長営業。',ended:false},{status:'終了',sc:'status-ended',title:'春のギフトフェア',period:'3/1〜3/31',text:'ギフトボックスセットの特別販売。',ended:true}];
 const adminDailyData=[{id:'d1',date:'2026年4月4日（土）',reporter:'中村 美咲（クローズ）',status:'未提出',shifts:[{id:'s1o',label:'🌅 開けシフト',name:'田中 葵',submitted:true,weather:'☀️ 晴れ',ryogae:'¥50,000',ake:'田中 葵',naka:'鈴木 健太',regular:'山田さんが久しぶりにご来店。',trend:'午前中少なめで14時以降に混雑。',event:'特になし',other:'エスプレッソ豆の残量少なめ。'},{id:'s1m',label:'🌤 中番シフト',name:'鈴木 健太',submitted:true,weather:'☀️ 晴れ',ryogae:'なし',ake:'田中 葵',naka:'鈴木 健太',regular:'佐々木さん（2回目）来店。',trend:'14〜16時がピーク。フード注文率高め。',event:'13時ラテアートWS、参加5名。',other:'特になし'},{id:'s1c',label:'🌙 クローズシフト',name:'中村 美咲',submitted:false}]},{id:'d2',date:'2026年4月3日（金）',reporter:'鈴木 健太（クローズ）',status:'提出済',shifts:[{id:'s2o',label:'🌅 開けシフト',name:'中村 美咲',submitted:true,weather:'⛅ 曇り',ryogae:'¥30,000',ake:'中村 美咲',naka:'田中 葵',regular:'特になし',trend:'午前中少なめ、午後から回復。',event:'特になし',other:'冷蔵庫温度確認済み。'},{id:'s2m',label:'🌤 中番シフト',name:'田中 葵',submitted:true,weather:'⛅ 曇り',ryogae:'なし',ake:'中村 美咲',naka:'田中 葵',regular:'木村さん（常連）今月3回目。',trend:'全体落ち着いた一日。',event:'特になし',other:'特になし'},{id:'s2c',label:'🌙 クローズシフト',name:'鈴木 健太',submitted:true,weather:'⛅ 曇り',ryogae:'なし',ake:'中村 美咲',naka:'田中 葵',regular:'山本さんご来店。',trend:'夕方18時以降は落ち着き。',event:'特になし',other:'レジ締め問題なし。バックフラッシュ完了。'}]}];
@@ -712,15 +886,15 @@ function showToast(msg){const t=document.getElementById('save-toast');t.textCont
 // ===== SIDEBAR =====
 function toggleSidebar(){sidebarExpanded=!sidebarExpanded;document.getElementById('sidebar').classList.toggle('expanded',sidebarExpanded);document.getElementById('toggle-icon').textContent=sidebarExpanded?'✕':'☰';}
 
-// ===== ADMIN TOGGLE =====
-function toggleAdmin(){
-  isAdmin=!isAdmin;
-  ['admin-toggle-mini','admin-toggle-full'].forEach(id=>{const el=document.getElementById(id);if(el){el.className='toggle-pill '+(isAdmin?'admin':'staff');}});
-  document.getElementById('role-label').textContent=isAdmin?'管理者表示':'スタッフ表示';
-  document.getElementById('user-role-full').textContent=isAdmin?'管理者':'スタッフ';
-  document.getElementById('user-name-full').textContent=isAdmin?'山田 店長':'田中 葵';
-  ['avatar-mini','avatar-full'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=isAdmin?'山田':'田中';el.style.background=isAdmin?'#EEEDFE':'#E1F5EE';el.style.color=isAdmin?'#3C3489':'#0F6E56';}});
-  document.getElementById('admin-nav').className='nav-section admin-nav'+(isAdmin?' visible':'');
+// ===== ADMIN NAV 表示制御（ロール連動）=====
+function updateAdminNav(){
+  const s=currentStaff();
+  const isAdminRole=s.role==='admin';
+  document.getElementById('admin-nav').className='nav-section admin-nav'+(isAdminRole?' visible':'');
+  // 管理者ページを見ているのにロールがスタッフになった場合はダッシュボードへ
+  const activePage=document.querySelector('.page.active')?.id?.replace('page-','');
+  const adminPages=['admin-reports','admin-orders','admin-stocktake','admin-notice-add','admin-manual','admin-staff'];
+  if(!isAdminRole&&activePage&&adminPages.includes(activePage)){navigate('dashboard');}
 }
 
 // ===== NAVIGATION =====
@@ -731,6 +905,8 @@ function navigate(pageId){
   document.querySelectorAll('.nav-item').forEach(n=>{if(n.dataset.page===pageId)n.classList.add('active');});
   document.getElementById('page-title').textContent=pageTitles[pageId]||pageId;
   if(sidebarExpanded){toggleSidebar();}
+  if(pageId==='admin-staff')renderAdminStaffList();
+  if(pageId==='admin-reports')initReportDateRange();
 }
 document.querySelectorAll('.nav-item').forEach(n=>{n.addEventListener('click',()=>navigate(n.dataset.page));});
 
@@ -745,35 +921,52 @@ function switchInnerTab(el,contentId){
 }
 
 // ===== DRUM =====
-function makeDrum(maxVal){
+function makeDrum(maxVal,dropDown){
   const wrap=document.createElement('div');wrap.className='drum-wrap';
   const disp=document.createElement('div');disp.className='drum-display';
   const span=document.createElement('span');span.textContent='0';
   const arrows=document.createElement('div');arrows.className='drum-arrows';
   arrows.innerHTML='<div class="drum-arrow">▲</div><div class="drum-arrow">▼</div>';
   disp.appendChild(span);disp.appendChild(arrows);
-  const popup=document.createElement('div');popup.className='drum-popup';
+  const popup=document.createElement('div');popup.className='drum-popup'+(dropDown?' drop-down':'');
   const list=document.createElement('div');list.className='drum-list';
   for(let i=0;i<=maxVal;i++){const opt=document.createElement('div');opt.className='drum-opt'+(i===0?' selected':'');opt.textContent=String(i);opt.addEventListener('click',e=>{e.stopPropagation();span.textContent=opt.textContent;list.querySelectorAll('.drum-opt').forEach(o=>o.classList.remove('selected'));opt.classList.add('selected');closeAllDrums();});list.appendChild(opt);}
   popup.appendChild(list);wrap.appendChild(disp);wrap.appendChild(popup);
   disp.addEventListener('click',e=>{e.stopPropagation();const op=popup.classList.contains('open');closeAllDrums();if(!op){popup.classList.add('open');disp.classList.add('open');const sel=list.querySelector('.selected');if(sel)sel.scrollIntoView({block:'center'});}});
   return wrap;
 }
+function getDrumValue(wrap){const span=wrap.querySelector('.drum-display span');return span?parseInt(span.textContent)||0:0;}
+function getDrumValues(){const rows=[...document.querySelectorAll('#inv-all-list .item-row')];const result={};rows.forEach(row=>{const name=row.querySelector('.item-name');const drum=row.querySelector('.drum-wrap');if(name&&drum){const text=[...name.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent.trim()).join('').trim();const tag=row.querySelector('.item-tag');const key=tag?tag.textContent+' '+text:text;result[key]=getDrumValue(drum);}});return result;}
 
 // ===== DASHBOARD =====
 function renderDashboard(){
   const nl=document.getElementById('dash-notice-list');nl.innerHTML='';
-  dashNotices.forEach(n=>{
+  const dashItems=noticeData.slice(0,7);
+  dashItems.forEach(n=>{
     const row=document.createElement('div');row.className='notice-row';
-    row.innerHTML=`<span class="badge ${n.badgeClass}">${n.badge}</span><span class="notice-row-title">${n.title}</span><span class="notice-row-time">${n.time}</span><span class="row-chev">›</span>`;
-    const det=document.createElement('div');det.className='row-detail';det.innerHTML=`<div class="detail-author">${n.author}</div><div class="detail-text">${n.text}</div>`;
+    const editBadge=n.edited?'<span class="badge badge-info" style="font-size:9px;padding:1px 5px">編集有</span>':'';
+    row.innerHTML=`<span class="badge ${n.badgeClass}">${n.badge}</span>${editBadge}<span class="notice-row-title">${n.title}</span><span class="notice-row-time">${n.editedAt||n.time}</span><span class="row-chev">›</span>`;
+    const det=document.createElement('div');det.className='row-detail';
+    // 本文
+    det.innerHTML=`<div class="detail-author">${n.author||''}</div><div class="detail-text">${(n.text||'').replace(/\n/g,'<br>')}</div>`;
+    // 画像
+    if(n.photos&&n.photos.length>0){
+      const photoWrap=document.createElement('div');
+      photoWrap.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:5px;margin-top:8px';
+      n.photos.forEach(src=>{
+        const img=document.createElement('img');
+        img.src=src;img.style.cssText='width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;border:.5px solid #e0e0e0';
+        photoWrap.appendChild(img);
+      });
+      det.appendChild(photoWrap);
+    }
     row.addEventListener('click',()=>{const open=det.classList.toggle('open');row.querySelector('.row-chev').textContent=open?'↓':'›';nl.insertBefore(det,row.nextSibling);});
     nl.appendChild(row);nl.appendChild(det);
   });
   const ll=document.getElementById('dash-limited-list');ll.innerHTML='';
-  dashLimited.forEach((item,idx)=>{
+  dashLimited.forEach((item)=>{
     const row=document.createElement('div');row.className='limited-row';
-    row.innerHTML=`<span class="status-pill ${item.sc}">${item.status}</span><span class="limited-row-title${item.ended?' ':''}" style="${item.ended?'color:var(--color-text-tertiary,#aaa)':''}">${item.title}</span><span class="limited-period-text">${item.period}</span><span class="row-chev">›</span>`;
+    row.innerHTML=`<span class="status-pill ${item.sc}">${item.status}</span><span class="limited-row-title${item.ended?' ':''}" style="${item.ended?'color:#aaa':''}">${item.title}</span><span class="limited-period-text">${item.period}</span><span class="row-chev">›</span>`;
     const det=document.createElement('div');det.className='limited-detail';det.innerHTML=`<div class="limited-detail-text">${item.text}</div>`;
     row.addEventListener('click',()=>{const open=det.classList.toggle('open');row.querySelector('.row-chev').textContent=open?'↓':'›';});
     ll.appendChild(row);ll.appendChild(det);
@@ -782,16 +975,16 @@ function renderDashboard(){
 renderDashboard();
 
 // ===== INVENTORY =====
-function buildInvRow(item){
+function buildInvRow(item,idx){
   const row=document.createElement('div');row.className='item-row';
   const nameEl=document.createElement('div');nameEl.className='item-name';
   if(item.tag){const t=document.createElement('span');t.className='item-tag '+item.tc;t.textContent=item.tag;nameEl.appendChild(t);}
   nameEl.appendChild(document.createTextNode(item.n));row.appendChild(nameEl);
-  row.appendChild(makeDrum(30));
+  row.appendChild(makeDrum(30,idx<2));
   return row;
 }
 const invList=document.getElementById('inv-all-list');
-invItems.forEach(item=>invList.appendChild(buildInvRow(item)));
+invItems.forEach((item,idx)=>invList.appendChild(buildInvRow(item,idx)));
 
 // ===== ORDER REQUEST =====
 function addOrderRow(){
@@ -835,20 +1028,52 @@ function renderNotice(){
   const list=document.getElementById('notice-list');list.innerHTML='';
   const label1=document.createElement('div');label1.className='section-label-notice';label1.textContent='直近7日の連絡';list.appendChild(label1);
   noticeData.forEach(n=>{
+    const confirmed=myConfirmedFor(n.id);
     const isOpen=noticeOpen[n.id];
-    const card=document.createElement('div');card.className='notice-card'+(myConfirmed[n.id]?'':' unread');
+    const card=document.createElement('div');card.className='notice-card'+(confirmed?'':' unread');
     const head=document.createElement('div');head.className='notice-head';
-    head.innerHTML=`<div class="notice-meta"><span class="badge ${n.badgeClass}">${n.badge}</span><span class="notice-title-text">${n.title}</span><span class="notice-time">${n.time}</span><span class="notice-chev">${isOpen?'↓':'›'}</span></div><div class="notice-author">${n.author}</div>`;
+    head.innerHTML=`<div class="notice-meta"><span class="badge ${n.badgeClass}">${n.badge}</span>${n.edited?'<span class="badge badge-info">編集有</span>':''}<span class="notice-title-text">${n.title}</span><span class="notice-time">${n.editedAt||n.time}</span><span class="notice-chev">${isOpen?'↓':'›'}</span></div><div class="notice-author">${n.author}</div>`;
     head.addEventListener('click',()=>{noticeOpen[n.id]=!noticeOpen[n.id];renderNotice();});
     card.appendChild(head);
     if(isOpen){
       const body=document.createElement('div');body.className='notice-body open';
       const textBox=document.createElement('div');textBox.className='notice-text-box';textBox.innerHTML=n.text.replace(/\n/g,'<br>');body.appendChild(textBox);
+      // 画像表示
+      if(n.photos&&n.photos.length>0){
+        const photoWrap=document.createElement('div');
+        photoWrap.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:6px;margin-bottom:10px';
+        n.photos.forEach(src=>{
+          const img=document.createElement('img');
+          img.src=src;img.style.cssText='width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:.5px solid #e0e0e0';
+          photoWrap.appendChild(img);
+        });
+        body.appendChild(photoWrap);
+      }
       const ca=document.createElement('div');ca.className='confirm-area';
-      const btn=document.createElement('button');btn.className='confirm-btn'+(myConfirmed[n.id]?' confirmed':'');btn.textContent=myConfirmed[n.id]?'✓ 確認済み':'確認しました';
-      if(!myConfirmed[n.id])btn.addEventListener('click',()=>{myConfirmed[n.id]=true;n.confirmed.push({initials:'田中',color:'#E1F5EE',textColor:'#0F6E56'});renderNotice();});
+      const btn=document.createElement('button');btn.className='confirm-btn'+(confirmed?' confirmed':'');btn.textContent=confirmed?'✓ 確認済み':'確認しました';
+      if(!confirmed){
+        btn.addEventListener('click',()=>{
+          const s=currentStaff();
+          setMyConfirmed(n.id);
+          // 既に同スタッフの確認アイコンがなければ追加
+          if(!n.confirmed.find(c=>c.initials===s.initials)){
+            n.confirmed.push({initials:s.initials,color:s.color,textColor:s.textColor});
+          }
+          renderNotice();
+        });
+      }
       ca.appendChild(btn);
-      if(n.confirmed.length>0){const iw=document.createElement('div');iw.className='confirmed-icons';n.confirmed.slice(0,5).forEach(u=>{const av=document.createElement('div');av.className='confirm-avatar';av.style.background=u.color;av.style.color=u.textColor;av.textContent=u.initials;iw.appendChild(av);});const cnt=document.createElement('span');cnt.className='confirm-count';cnt.textContent=n.confirmed.length+'名確認済み';iw.appendChild(cnt);ca.appendChild(iw);}
+      if(n.confirmed.length>0){
+        const iw=document.createElement('div');iw.className='confirmed-icons';
+        n.confirmed.slice(0,5).forEach(u=>{
+          const av=document.createElement('div');av.className='confirm-avatar';
+          av.style.background=u.color;av.style.color=u.textColor;av.textContent=u.initials;
+          iw.appendChild(av);
+        });
+        const cnt=document.createElement('span');cnt.className='confirm-count';
+        cnt.textContent=n.confirmed.length+'名確認済み';
+        iw.appendChild(cnt);ca.appendChild(iw);
+      }
       body.appendChild(ca);card.appendChild(body);
     }
     list.appendChild(card);
@@ -859,13 +1084,55 @@ renderNotice();
 // ===== MANUAL =====
 function buildManualList(items,containerId,hasRecipe){
   const list=document.getElementById(containerId);if(!list)return;list.innerHTML='';
-  items.forEach(d=>{
+  items.filter(d=>!d.hidden).forEach(d=>{
     const item=document.createElement('div');item.className='manual-item';
     const head=document.createElement('div');head.className='manual-head';head.onclick=()=>toggleManual(head);
     if(hasRecipe){const b=document.createElement('span');b.className='menu-badge '+(d.t==='standard'?'menu-badge-standard':'menu-badge-limited');b.textContent=d.t==='standard'?'定番':'限定';head.appendChild(b);}
-    const tw=document.createElement('div');tw.style.flex='1';const tt=document.createElement('div');tt.className='manual-title';tt.textContent=d.n;tw.appendChild(tt);if(d.s){const ss=document.createElement('div');ss.className='manual-meta-text';ss.textContent=d.s;tw.appendChild(ss);}
-    head.appendChild(tw);const chev=document.createElement('span');chev.className='manual-chev';chev.textContent='›';head.appendChild(chev);
-    const detail=document.createElement('div');detail.className='manual-detail';detail.innerHTML='<div class="recipe-photo"><div class="photo-placeholder-icon">📷</div><div class="photo-placeholder-text">完成写真</div><button class="photo-upload-btn">写真を追加</button></div><div class="placeholder-steps">レシピ・提供手順を追加してください</div>';
+    const tw=document.createElement('div');tw.style.flex='1';
+    const tt=document.createElement('div');tt.className='manual-title';tt.textContent=d.n;tw.appendChild(tt);
+    if(d.s){const ss=document.createElement('div');ss.className='manual-meta-text';ss.textContent=d.s;tw.appendChild(ss);}
+    head.appendChild(tw);
+    const chev=document.createElement('span');chev.className='manual-chev';chev.textContent='›';head.appendChild(chev);
+
+    const detail=document.createElement('div');detail.className='manual-detail';
+
+    // 画像
+    const photoDiv=document.createElement('div');
+    photoDiv.className='recipe-photo';
+    photoDiv.style.position='relative';
+    if(d.photo){
+      const img=document.createElement('img');
+      img.src=d.photo;
+      img.style.cssText='width:100%;height:100%;object-fit:cover;position:absolute;inset:0';
+      photoDiv.appendChild(img);
+    }else{
+      photoDiv.innerHTML='<div class="photo-placeholder-icon">📷</div><div class="photo-placeholder-text">写真未登録</div>';
+    }
+    detail.appendChild(photoDiv);
+
+    // 材料（recipeのみ）
+    if(hasRecipe&&d.material){
+      const matWrap=document.createElement('div');matWrap.style.cssText='padding:10px 14px;background:#f9f9f6;border-top:.5px solid #eee';
+      const matLabel=document.createElement('div');matLabel.style.cssText='font-size:10px;color:#aaa;font-weight:500;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px';matLabel.textContent='材料';
+      const matVal=document.createElement('div');matVal.style.cssText='font-size:12px;color:#555;line-height:1.6';matVal.textContent=d.material;
+      matWrap.appendChild(matLabel);matWrap.appendChild(matVal);
+      detail.appendChild(matWrap);
+    }
+
+    // 手順
+    if(d.steps&&d.steps.trim()){
+      const sw=document.createElement('div');sw.className='steps-wrap';
+      d.steps.split('\n').filter(s=>s.trim()).forEach((s,i)=>{
+        const si=document.createElement('div');si.className='step-item';
+        const sn=document.createElement('div');sn.className='step-num';sn.textContent=i+1;
+        si.appendChild(sn);si.appendChild(document.createTextNode(s.trim()));sw.appendChild(si);
+      });
+      detail.appendChild(sw);
+    }else{
+      const ph=document.createElement('div');ph.className='placeholder-steps';
+      ph.textContent='手順を追加してください';detail.appendChild(ph);
+    }
+
     item.appendChild(head);item.appendChild(detail);list.appendChild(item);
   });
 }
@@ -886,7 +1153,7 @@ function renderAdminDaily(){
     const isOpen=adminDailyOpen[rep.id];
     const card=document.createElement('div');card.className='daily-card';
     const head=document.createElement('div');head.className='daily-head'+(isOpen?' open':'');
-    head.innerHTML=`<span class="head-reporter">報告者：${rep.reporter}</span><div class="head-row2"><span class="head-date">${rep.date}</span><div class="head-right"><span class="badge ${rep.status==='提出済'?'badge-done':'badge-pending'}">${rep.status}</span><span class="head-chev">${isOpen?'↓':'›'}</span></div></div>`;
+    head.innerHTML=`<span class="head-reporter">報告者：${rep.reporter}</span><div class="head-row2"><span class="head-date">${rep.date}</span><div class="head-right"><span class="head-chev">${isOpen?'↓':'›'}</span></div></div>`;
     head.addEventListener('click',()=>{adminDailyOpen[rep.id]=!adminDailyOpen[rep.id];renderAdminDaily();});
     card.appendChild(head);
     if(isOpen){
@@ -895,7 +1162,7 @@ function renderAdminDaily(){
         if(adminShiftOpen[sh.id]===undefined)adminShiftOpen[sh.id]=false;
         const ss=document.createElement('div');ss.className='shift-section';
         const shead=document.createElement('div');shead.className='shift-head';shead.style.cursor=sh.submitted?'pointer':'default';
-        shead.innerHTML=`<span class="shift-label">${sh.label}</span><span class="shift-reporter-name" style="color:${sh.submitted?'#444':'#bbb'}">${sh.name}</span>${!sh.submitted?'<span class="badge badge-pending" style="margin-left:6px">未提出</span>':''}<span class="shift-chev">${adminShiftOpen[sh.id]?'↓':'›'}</span>`;
+        shead.innerHTML=`<span class="shift-label">${sh.label}</span><span class="shift-reporter-name" style="color:${sh.submitted?'#444':'#bbb'}">${sh.name}</span><span class="shift-chev">${adminShiftOpen[sh.id]?'↓':'›'}</span>`;
         if(sh.submitted)shead.addEventListener('click',()=>{adminShiftOpen[sh.id]=!adminShiftOpen[sh.id];renderAdminDaily();});
         ss.appendChild(shead);
         if(sh.submitted&&adminShiftOpen[sh.id]){const sdet=document.createElement('div');sdet.className='shift-detail open';sdet.innerHTML=`<div class="detail-grid"><div class="detail-cell"><div class="detail-label-sm">天気</div><div class="detail-value">${sh.weather}</div></div><div class="detail-cell"><div class="detail-label-sm">両替金額</div><div class="detail-value">${sh.ryogae}</div></div><div class="detail-cell"><div class="detail-label-sm">開け担当</div><div class="detail-value">${sh.ake}</div></div><div class="detail-cell"><div class="detail-label-sm">中番担当</div><div class="detail-value">${sh.naka}</div></div></div><div class="detail-field"><div class="detail-label-sm">常連・リピーター情報</div><div class="detail-value">${sh.regular}</div></div><div class="detail-field"><div class="detail-label-sm">お客様の入店傾向</div><div class="detail-value">${sh.trend}</div></div><div class="detail-field"><div class="detail-label-sm">ワークショップ・イベント</div><div class="detail-value">${sh.event}</div></div><div class="detail-field"><div class="detail-label-sm">その他・特記事項</div><div class="detail-value">${sh.other}</div></div>`;ss.appendChild(sdet);}
@@ -914,7 +1181,7 @@ const aDD=document.getElementById('admin-daily-drink');dailyDrinks.forEach(item=
 const aDF=document.getElementById('admin-daily-food');dailyFoods.forEach(item=>aDF.appendChild(buildAdminDailyRow(item)));
 
 // ===== IRREGULAR ORDERS =====
-function renderIrreg(){
+function _renderIrregOld(){
   const today=new Date(2026,3,4);const twoWeeksAgo=new Date(today);twoWeeksAgo.setDate(twoWeeksAgo.getDate()-14);
   const visible=irregOrders.filter(o=>!o.orderedAt||o.orderedAt>=twoWeeksAgo);
   const pending=visible.filter(o=>!o.orderedAt);const done=visible.filter(o=>o.orderedAt);
@@ -932,11 +1199,9 @@ function buildIrregCard(o,isDone){
   if(isDone){const dd=document.createElement('div');dd.style.cssText='font-size:10px;color:#aaa;margin-top:2px';const p2=n=>String(n).padStart(2,'0');dd.textContent=`${o.orderedAt.getFullYear()}/${p2(o.orderedAt.getMonth()+1)}/${p2(o.orderedAt.getDate())} 発注済み`;nw.appendChild(dd);}
   row.appendChild(nw);const btn=document.createElement('button');
   if(isDone){btn.className='btn-ordered-done';btn.textContent='✓ 発注済み';}
-  else{btn.className='btn-order-done';btn.textContent='発注済みにする';btn.addEventListener('click',()=>{o.orderedAt=new Date();renderIrreg();});}
+  else{btn.className='btn-order-done';btn.textContent='発注済みにする';btn.addEventListener('click',()=>{o.orderedAt=new Date();renderIrreg();saveOrders();});}
   row.appendChild(btn);card.appendChild(row);return card;
 }
-renderIrreg();
-
 // ===== ADMIN STOCKTAKE =====
 function renderAdminSt(key){
   const r=stReports[key];
@@ -969,14 +1234,58 @@ function buildAdminManualList(items,containerId,cat){
   const list=document.getElementById(containerId);if(!list)return;list.innerHTML='';
   items.forEach(d=>{
     const item=document.createElement('div');item.className='manual-item';
+    item.style.opacity=d.hidden?'0.5':'1';
     const head=document.createElement('div');head.className='manual-head';
     if(cat==='recipe'){const b=document.createElement('span');b.className='menu-badge '+(d.t==='standard'?'menu-badge-standard':'menu-badge-limited');b.textContent=d.t==='standard'?'定番':'限定';head.appendChild(b);}
-    const tw=document.createElement('div');tw.style.flex='1';const tt=document.createElement('div');tt.className='manual-title';tt.textContent=d.n;tw.appendChild(tt);if(d.s){const ss=document.createElement('div');ss.className='manual-meta-text';ss.textContent=d.s;tw.appendChild(ss);}
-    head.appendChild(tw);const btn=document.createElement('button');btn.className='btn-edit';btn.textContent='編集';btn.onclick=()=>openManualEdit(d,cat);head.appendChild(btn);
+    // 画像サムネイル（小）
+    if(d.photo){
+      const thumb=document.createElement('img');
+      thumb.src=d.photo;thumb.style.cssText='width:32px;height:32px;object-fit:cover;border-radius:4px;border:.5px solid #e0e0e0;flex-shrink:0';
+      head.appendChild(thumb);
+    }
+    const tw=document.createElement('div');tw.style.flex='1';
+    const tt=document.createElement('div');tt.className='manual-title';tt.textContent=d.n;
+    if(d.hidden){tt.style.cssText='color:#aaa;text-decoration:line-through';}
+    tw.appendChild(tt);
+    if(d.s){const ss=document.createElement('div');ss.className='manual-meta-text';ss.textContent=d.s;tw.appendChild(ss);}
+    head.appendChild(tw);
+    // 表示/非表示トグル
+    const tog=document.createElement('button');
+    tog.className='btn';tog.style.cssText='font-size:10px;padding:3px 7px;margin-right:4px;'+(d.hidden?'color:#aaa':'color:#0F6E56;border-color:#1D9E75');
+    tog.textContent=d.hidden?'非表示':'表示中';
+    tog.onclick=(e)=>{
+      e.stopPropagation();
+      d.hidden=!d.hidden;
+      buildAdminManualList(items,containerId,cat);
+      rebuildStaffManual();
+    };
+    head.appendChild(tog);
+    const btn=document.createElement('button');btn.className='btn-edit';btn.textContent='編集';btn.onclick=()=>openManualEdit(d,cat);head.appendChild(btn);
     item.appendChild(head);list.appendChild(item);
   });
 }
-const adminManualData={openclose:[{n:'🌅 オープン手順',s:'所要時間：約30分'},{n:'🌙 クローズ手順',s:'所要時間：約45分'}],cleaning:[{n:'🧹 日常清掃チェックリスト',s:'毎日実施'},{n:'🧼 マシン周りの清掃',s:'毎日クローズ時'}],machine:[{n:'⚙️ エスプレッソマシン 日常操作',s:'La Marzocco Linea Mini'},{n:'🧼 バックフラッシュ手順',s:'毎日クローズ時に実施'}],operation:[{n:'👥 接客の基本フロー',s:'入店〜退店まで'},{n:'📦 テイクアウト対応',s:'包装・提供手順'}],register:[{n:'💳 お会計の手順',s:'現金・カード・QR対応'},{n:'🏧 レジ締め手順',s:'クローズ時に実施'}]};
+const adminManualData={
+  openclose:[
+    {n:'🌅 オープン手順',s:'所要時間：約30分',steps:'シャッター解除・照明ON\nマシン電源ON（15分ウォームアップ）\n冷蔵庫温度確認・食材チェック\n清掃・テーブルセッティング\nレジ起動・釣銭確認（¥50,000）\n試飲で確認・オープン完了'},
+    {n:'🌙 クローズ手順',s:'所要時間：約45分',steps:'ラストオーダー・サービス終了\nバックフラッシュ実施\n食材冷蔵庫格納\nレジ締め・日報記入\n施錠確認・退店'},
+  ],
+  cleaning:[
+    {n:'🧹 日常清掃チェックリスト',s:'毎日実施',steps:'カウンター・テーブルの拭き上げ\n床の掃き掃除・モップがけ\nトイレ清掃\nゴミ箱の確認・交換'},
+    {n:'🧼 マシン周りの清掃',s:'毎日クローズ時',steps:'グループヘッドのブラッシング\nポルタフィルターの洗浄\nスチームワンドの拭き上げ\nドリップトレイの洗浄'},
+  ],
+  machine:[
+    {n:'⚙️ エスプレッソマシン 日常操作',s:'La Marzocco Linea Mini',steps:'電源ON → 15分ウォームアップ\n空抽出で温度確認\nコーヒー粉18g充填・タンピング\n25〜30秒で約60ml抽出'},
+    {n:'🧼 バックフラッシュ手順',s:'毎日クローズ時に実施',steps:'ブラインドフィルターをセット\n洗剤（Puly Caff）1g投入\n10秒ON → 5秒OFF × 5回\n洗剤なしで2回すすぎ'},
+  ],
+  operation:[
+    {n:'👥 接客の基本フロー',s:'入店〜退店まで',steps:'入店時にご挨拶\n席のご案内・メニューをお渡し\nご注文を伺い復唱確認\nドリンク・フードの提供\nお会計・お見送り'},
+    {n:'📦 テイクアウト対応',s:'包装・提供手順',steps:'テイクアウト用カップ・リッドを確認\nドリンクをカップに注ぎリッドを閉める\nスリーブを装着（ホットの場合）\nショッパーに入れてお渡し'},
+  ],
+  register:[
+    {n:'💳 お会計の手順',s:'現金・カード・QR対応',steps:'レジにオーダーを入力\n金額をお客様に提示\n現金・カード・QRで決済\n領収書が必要か確認'},
+    {n:'🏧 レジ締め手順',s:'クローズ時に実施',steps:'レジ内の現金を確認・計算\n売上レポートを確認\n差異がある場合は責任者に報告\n翌日用の釣銭（¥50,000）をセット'},
+  ],
+};
 buildAdminManualList(drinks,'admin-drink-list','recipe');
 buildAdminManualList(foods,'admin-food-list','recipe');
 buildAdminManualList(adminManualData.openclose,'admin-openclose-list','openclose');
@@ -991,7 +1300,9 @@ function switchAdminManualTab(el,key){document.querySelectorAll('#admin-manual-t
 function switchAdminManualSub(el,key){el.closest('.sub-tab-bar').querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');['am-drink','am-food'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});const t=document.getElementById(key);if(t)t.style.display='block';}
 document.querySelectorAll('#am-drink .sub-tab, #am-food .sub-tab, #admin-manual-recipe .sub-tab').forEach(el=>{el.addEventListener('click',()=>{const key=el.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];if(key)switchAdminManualSub(el,key);});});
 
+let currentModalPhoto=null; // モーダル中の選択画像データ
 function buildManualModalBody(cat,data={}){
+  currentModalPhoto=data.photo||null;
   const defs=manualFormDefs[cat]||manualFormDefs['register'];const body=document.getElementById('manual-modal-body');body.innerHTML='';mPhotoId++;
   defs.forEach(f=>{
     const group=document.createElement('div');group.className='form-group';
@@ -999,15 +1310,53 @@ function buildManualModalBody(cat,data={}){
     if(f.type==='select'){const sel=document.createElement('select');sel.className='form-input form-select';sel.id='mf-'+f.id;f.options.forEach(o=>{const opt=document.createElement('option');opt.value=o.v;opt.textContent=o.l;if(data[f.id]===o.v)opt.selected=true;sel.appendChild(opt);});group.appendChild(sel);}
     else if(f.type==='text'){const inp=document.createElement('input');inp.type='text';inp.className='form-input';inp.id='mf-'+f.id;inp.placeholder=f.ph||'';inp.value=data[f.id]||'';group.appendChild(inp);}
     else if(f.type==='textarea'){const ta=document.createElement('textarea');ta.className='form-input form-textarea';ta.id='mf-'+f.id;ta.placeholder=f.ph||'';ta.value=data[f.id]||'';group.appendChild(ta);}
-    else if(f.type==='photo'){const fid='mf-photo-'+mPhotoId;const area=document.createElement('div');area.className='photo-upload-area';area.onclick=()=>document.getElementById(fid).click();const icon=document.createElement('div');icon.className='photo-upload-icon';icon.textContent='📷';const txt=document.createElement('div');txt.className='photo-upload-text';txt.id='mf-photo-label-'+mPhotoId;txt.textContent=data.photo?'写真登録済み（タップで変更）':'タップして写真を選択';area.appendChild(icon);area.appendChild(txt);const fi=document.createElement('input');fi.type='file';fi.id=fid;fi.accept='image/*';fi.style.display='none';fi.onchange=()=>{if(fi.files[0])txt.textContent=fi.files[0].name+'（登録済み）';};group.appendChild(area);group.appendChild(fi);}
+    else if(f.type==='photo'){
+      const fid='mf-photo-'+mPhotoId;
+      const area=document.createElement('div');area.className='photo-upload-area';
+      // 既存画像があればプレビュー表示
+      if(currentModalPhoto){
+        const previewImg=document.createElement('img');
+        previewImg.src=currentModalPhoto;
+        previewImg.style.cssText='width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin-bottom:6px';
+        area.appendChild(previewImg);
+      }
+      const icon=document.createElement('div');icon.className='photo-upload-icon';icon.textContent='📷';
+      const txt=document.createElement('div');txt.className='photo-upload-text';txt.id='mf-photo-label-'+mPhotoId;
+      txt.textContent=currentModalPhoto?'タップして変更':'タップして写真を選択';
+      area.appendChild(icon);area.appendChild(txt);
+      const fi=document.createElement('input');fi.type='file';fi.id=fid;fi.accept='image/*';fi.style.display='none';
+      fi.onchange=()=>{
+        if(fi.files[0]){
+          const reader=new FileReader();
+          reader.onload=e=>{
+            currentModalPhoto=e.target.result;
+            // プレビュー更新
+            const prev=area.querySelector('img');
+            if(prev){prev.src=currentModalPhoto;}
+            else{const pi=document.createElement('img');pi.src=currentModalPhoto;pi.style.cssText='width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin-bottom:6px';area.insertBefore(pi,area.firstChild);}
+            txt.textContent=fi.files[0].name+'（登録済み）';
+          };
+          reader.readAsDataURL(fi.files[0]);
+        }
+      };
+      area.onclick=()=>fi.click();
+      group.appendChild(area);group.appendChild(fi);
+    }
     body.appendChild(group);
   });
 }
 function openManualAdd(cat){currentManualCat=cat;isEditMode=false;editTarget=null;const catLabel={recipe:'レシピ',openclose:'開け・閉め作業',cleaning:'掃除',machine:'マシン操作',operation:'オペレーション',register:'レジ/お会計'};document.getElementById('manual-modal-title').textContent='「'+catLabel[cat]+'」に追加';document.getElementById('manual-modal-save').textContent='追加する';document.getElementById('manual-modal-delete').style.display='none';buildManualModalBody(cat,{});document.getElementById('manual-modal').classList.add('open');}
-function openManualEdit(item,cat){currentManualCat=cat;isEditMode=true;editTarget=item;document.getElementById('manual-modal-title').textContent='「'+item.n+'」を編集';document.getElementById('manual-modal-save').textContent='保存する';document.getElementById('manual-modal-delete').style.display='block';buildManualModalBody(cat,{badge:item.t,title:item.n,material:item.s,duration:item.s,frequency:item.s,timing:item.s});document.getElementById('manual-modal').classList.add('open');}
+function openManualEdit(item,cat){
+  currentManualCat=cat;isEditMode=true;editTarget=item;
+  document.getElementById('manual-modal-title').textContent='「'+item.n+'」を編集';
+  document.getElementById('manual-modal-save').textContent='保存する';
+  document.getElementById('manual-modal-delete').style.display='block';
+  buildManualModalBody(cat,{badge:item.t,title:item.n,material:item.material!=null?item.material:item.s,duration:item.s,frequency:item.s,timing:item.s,steps:item.steps||'',photo:item.photo||null});
+  document.getElementById('manual-modal').classList.add('open');
+}
 function closeManualModal(){document.getElementById('manual-modal').classList.remove('open');}
-function saveManualItem(){const titleField=document.getElementById('mf-title');if(titleField&&!titleField.value.trim()){titleField.style.borderColor='#E24B4A';titleField.focus();return;}closeManualModal();showToast(isEditMode?'✓ 保存しました':'✓ 追加しました');}
-function deleteManualItem(){closeManualModal();showToast('🗑 削除しました');}
+function _saveManualItemOld(){const titleField=document.getElementById('mf-title');if(titleField&&!titleField.value.trim()){titleField.style.borderColor='#E24B4A';titleField.focus();return;}closeManualModal();showToast(isEditMode?'✓ 保存しました':'✓ 追加しました');}
+function _deleteManualItemOld(){closeManualModal();showToast('🗑 削除しました');}
 document.getElementById('manual-modal').addEventListener('click',e=>{if(e.target===document.getElementById('manual-modal'))closeManualModal();});
 
 // ===== NOTICE ADD =====
@@ -1020,6 +1369,922 @@ let confirmOn=false;
 function toggleConfirm(){confirmOn=!confirmOn;const ts=document.getElementById('confirm-toggle');if(ts)ts.classList.toggle('on',confirmOn);const pc=document.getElementById('preview-confirm');if(pc)pc.style.display=confirmOn?'inline-flex':'none';}
 function updateNoticePreview(){const badge=document.getElementById('notice-badge')?.value||'important';const title=document.getElementById('notice-title-input')?.value||'タイトルがここに表示されます';const body=document.getElementById('notice-body-input')?.value||'本文がここに表示されます';const cat=document.getElementById('notice-category')?.value||'notice';const badgeEl=document.getElementById('preview-badge');if(badgeEl){badgeEl.className='preview-badge '+badge;const badgeLabels={important:'重要',share:'共有',info:'お知らせ'};badgeEl.textContent=badgeLabels[badge]||badge;}const ptEl=document.getElementById('preview-title');if(ptEl)ptEl.textContent=title;const pbEl=document.getElementById('preview-body');if(pbEl)pbEl.innerHTML=body.replace(/\n/g,'<br>');const periodEl=document.getElementById('preview-period');if(periodEl){if(cat==='limited'){const start=document.getElementById('period-start')?.value;const end=document.getElementById('period-end')?.value;if(start||end){const fmt=d=>d?d.replace(/-/g,'/'):'未設定';periodEl.textContent='📅 '+fmt(start)+' 〜 '+fmt(end);periodEl.style.display='block';}else{periodEl.style.display='none';}}else{periodEl.style.display='none';}}}
 function resetNoticeForm(){const fields=['notice-category','notice-badge','notice-title-input','notice-body-input','period-start','period-end'];fields.forEach(id=>{const el=document.getElementById(id);if(el)el.value=el.tagName==='SELECT'?el.options[0]?.value:'';});const pr=document.getElementById('period-row');if(pr)pr.className='period-row';noticePhotos.fill(null);buildNoticePhotoGrid();if(confirmOn)toggleConfirm();updateNoticePreview();}
-function submitNotice(){const title=document.getElementById('notice-title-input')?.value.trim();const body=document.getElementById('notice-body-input')?.value.trim();if(!title){const el=document.getElementById('notice-title-input');if(el){el.style.borderColor='#E24B4A';el.focus();}return;}if(!body){const el=document.getElementById('notice-body-input');if(el){el.style.borderColor='#E24B4A';el.focus();}return;}const success=document.getElementById('notice-post-success');if(success){success.style.display='block';setTimeout(()=>{success.style.display='none';resetNoticeForm();},3000);}}
+// 業務連絡投稿（管理者→スタッフ画面へ反映）
+let noticeIdCounter=100;
+function submitNotice(){
+  const title=document.getElementById('notice-title-input')?.value.trim();
+  const body=document.getElementById('notice-body-input')?.value.trim();
+  if(!title){const el=document.getElementById('notice-title-input');if(el){el.style.borderColor='#E24B4A';el.focus();}return;}
+  if(!body){const el=document.getElementById('notice-body-input');if(el){el.style.borderColor='#E24B4A';el.focus();}return;}
+  const badgeVal=document.getElementById('notice-badge')?.value||'important';
+  const badgeLabels={important:'重要',share:'共有',info:'お知らせ'};
+  const badgeClassMap={important:'badge-important',share:'badge-share',info:'badge-info'};
+  // 画像データを収集
+  const photos=noticePhotos.filter(p=>p!==null);
+  const newNotice={
+    id:++noticeIdCounter,
+    badge:badgeLabels[badgeVal]||'重要',
+    badgeClass:badgeClassMap[badgeVal]||'badge-important',
+    title,text:body,
+    photos:photos,
+    time:'たった今',author:'管理者',
+    confirmed:[],edited:false,editedAt:null
+  };
+  noticeData.unshift(newNotice);
+  // 全スタッフの確認状態を未確認で初期化
+  staffList.forEach(s=>{
+    if(!confirmedByStaff[s.id])confirmedByStaff[s.id]={};
+    confirmedByStaff[s.id][newNotice.id]=false;
+  });
+  renderNotice();
+  renderDashboard();
+  renderNoticeEditList();
+  saveNotice(); // スプレッドシートに保存
+  const success=document.getElementById('notice-post-success');
+  if(success){success.style.display='block';setTimeout(()=>{success.style.display='none';resetNoticeForm();},3000);}
+}
+
+// ===== 業務連絡 投稿内容編集タブ =====
+function switchNoticeAddTab(el,contentId){
+  document.querySelectorAll('#notice-add-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['notice-new-post','notice-edit-list'].forEach(id=>{const s=document.getElementById(id);if(s)s.style.display='none';});
+  const t=document.getElementById(contentId);if(t)t.style.display='block';
+  if(contentId==='notice-edit-list')renderNoticeEditList();
+}
+// ===== 汎用確認モーダル（window.confirmの代替） =====
+function showConfirmModal(title, body, onOk){
+  document.getElementById('confirm-modal-title').textContent=title;
+  document.getElementById('confirm-modal-body').textContent=body;
+  const modal=document.getElementById('confirm-modal');
+  const okBtn=document.getElementById('confirm-modal-ok');
+  const cancelBtn=document.getElementById('confirm-modal-cancel');
+  // イベント重複防止のためcloneで付け直し
+  const newOk=okBtn.cloneNode(true);const newCancel=cancelBtn.cloneNode(true);
+  okBtn.parentNode.replaceChild(newOk,okBtn);
+  cancelBtn.parentNode.replaceChild(newCancel,cancelBtn);
+  newOk.addEventListener('click',()=>{modal.classList.remove('open');onOk();});
+  newCancel.addEventListener('click',()=>modal.classList.remove('open'));
+  modal.classList.add('open');
+}
+document.getElementById('confirm-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('confirm-modal'))
+    document.getElementById('confirm-modal').classList.remove('open');
+});
+
+function renderNoticeEditList(){
+  const container=document.getElementById('notice-edit-items');if(!container)return;
+  container.innerHTML='';
+  if(!noticeData.length){
+    container.innerHTML='<div class="empty-state">投稿がありません</div>';return;
+  }
+  noticeData.forEach(n=>{
+    const card=document.createElement('div');card.className='card';card.style.marginBottom='10px';
+    // メタ行
+    const meta=document.createElement('div');
+    meta.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap';
+    meta.innerHTML=`<span class="badge ${n.badgeClass}">${n.badge}</span>${n.edited?'<span class="badge badge-info">編集有</span>':''}<span style="flex:1;font-size:13px;font-weight:500;color:#1a1a1a;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.title}</span><span style="font-size:11px;color:#aaa;white-space:nowrap">${n.editedAt||n.time}</span>`;
+    // ボタン行
+    const btnRow=document.createElement('div');
+    btnRow.style.cssText='display:flex;gap:8px';
+    const editBtn=document.createElement('button');
+    editBtn.className='btn-edit';editBtn.style.flex='1';editBtn.textContent='✏️ 編集する';
+    editBtn.onclick=()=>openNoticeEditModal(n);
+    const delBtn=document.createElement('button');
+    delBtn.className='btn';delBtn.style.cssText='color:#712B13;border-color:#F09595;background:#FAECE7';
+    delBtn.textContent='🗑 削除';
+    delBtn.onclick=()=>{
+      showConfirmModal(
+        '投稿を削除',
+        '「'+n.title+'」を削除しますか？\nダッシュボードとスタッフ画面からも削除されます。',
+        ()=>{
+          const idx=noticeData.findIndex(x=>x.id===n.id);
+          if(idx>-1)noticeData.splice(idx,1);
+          renderNoticeEditList();renderNotice();renderDashboard();
+          saveNotice();
+          showToast('🗑 投稿を削除しました');
+        }
+      );
+    };
+    btnRow.appendChild(editBtn);btnRow.appendChild(delBtn);
+    card.appendChild(meta);card.appendChild(btnRow);
+    container.appendChild(card);
+  });
+}
+let editingNoticeId=null;
+function openNoticeEditModal(n){
+  editingNoticeId=n.id;
+  document.getElementById('notice-edit-modal-title').textContent='「'+n.title+'」を編集';
+  const badgeRev={重要:'important',共有:'share',お知らせ:'info',済:'share'};
+  document.getElementById('notice-edit-badge').value=badgeRev[n.badge]||'important';
+  document.getElementById('notice-edit-title').value=n.title;
+  document.getElementById('notice-edit-body').value=n.text;
+  document.getElementById('notice-edit-modal').classList.add('open');
+}
+function closeNoticeEditModal(){document.getElementById('notice-edit-modal').classList.remove('open');}
+function saveNoticeEdit(){
+  const n=noticeData.find(x=>x.id===editingNoticeId);if(!n)return;
+  const badgeVal=document.getElementById('notice-edit-badge').value;
+  const badgeLabels={important:'重要',share:'共有',info:'お知らせ'};
+  const badgeClassMap={important:'badge-important',share:'badge-share',info:'badge-info'};
+  const now=new Date();const p=x=>String(x).padStart(2,'0');
+  n.badge=badgeLabels[badgeVal];n.badgeClass=badgeClassMap[badgeVal];
+  n.title=document.getElementById('notice-edit-title').value.trim();
+  n.text=document.getElementById('notice-edit-body').value.trim();
+  n.edited=true;
+  n.editedAt=`${now.getMonth()+1}/${now.getDate()} ${p(now.getHours())}:${p(now.getMinutes())} 編集`;
+  closeNoticeEditModal();
+  renderNotice();renderDashboard();renderNoticeEditList();
+  saveNotice(); // スプレッドシートに保存
+  showToast('✓ 投稿を編集しました');
+}
+document.getElementById('notice-edit-modal').addEventListener('click',e=>{if(e.target===document.getElementById('notice-edit-modal'))closeNoticeEditModal();});
+
+// ===== 日報 今日ボタン =====
+function setDailyToday(){
+  const now=new Date();
+  const jst=new Date(now.toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));
+  const y=jst.getFullYear();
+  const mo=String(jst.getMonth()+1).padStart(2,'0');
+  const d=String(jst.getDate()).padStart(2,'0');
+  const el=document.getElementById('daily-report-date');
+  if(el)el.value=`${y}-${mo}-${d}`;
+}
+
+// ===== 日報提出 =====
+function submitDailyReport(){
+  const dateEl=document.getElementById('daily-report-date');
+  const nameEl=document.getElementById('daily-reporter-name');
+  const weatherEl=document.getElementById('daily-weather');
+  const shiftEl=document.getElementById('daily-shift');
+  const ryogaeEl=document.getElementById('daily-ryogae');
+  const regularEl=document.getElementById('daily-regular');
+  const trendEl=document.getElementById('daily-trend');
+  const eventEl=document.getElementById('daily-event');
+  const otherEl=document.getElementById('daily-other');
+
+  // 日付ラベル生成
+  let dateLabel='';
+  if(dateEl&&dateEl.value){
+    const d=new Date(dateEl.value+'T00:00:00');
+    const days=['日','月','火','水','木','金','土'];
+    dateLabel=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
+  }else{
+    // 未入力なら今日の日本時間
+    const now=new Date();
+    const jst=new Date(now.toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));
+    const days=['日','月','火','水','木','金','土'];
+    dateLabel=`${jst.getFullYear()}年${jst.getMonth()+1}月${jst.getDate()}日（${days[jst.getDay()]}）`;
+  }
+
+  const reporterName=nameEl?.value.trim()||currentStaff().name;
+  const shiftLabel=shiftEl?.value||'開け担当';
+  const shiftKey=shiftLabel==='開け担当'?'open':shiftLabel==='中番担当'?'mid':'close';
+  const shiftLabelMap={open:'🌅 開けシフト',mid:'🌤 中番シフト',close:'🌙 クローズシフト'};
+  const report={
+    name:reporterName,shift:shiftKey,shiftLabel:shiftLabelMap[shiftKey]||shiftLabel,
+    weather:weatherEl?.value||'☀️ 晴れ',
+    ryogae:ryogaeEl?.value?'¥'+parseInt(ryogaeEl.value).toLocaleString():'なし',
+    regular:regularEl?.value||'特になし',
+    trend:trendEl?.value||'特になし',
+    event:eventEl?.value||'特になし',
+    other:otherEl?.value||'特になし',
+    submitted:true,date:dateLabel,
+  };
+  // 管理者の報告一覧に反映（日付ごと）
+  let dayEntry=adminDailyData.find(d=>d.date===dateLabel);
+  if(!dayEntry){
+    const dayId='d-'+Date.now();
+    dayEntry={id:dayId,date:dateLabel,reporter:reporterName,status:'未提出',shifts:[
+      {id:dayId+'-o',label:'🌅 開けシフト',name:'',submitted:false},
+      {id:dayId+'-m',label:'🌤 中番シフト',name:'',submitted:false},
+      {id:dayId+'-c',label:'🌙 クローズシフト',name:'',submitted:false},
+    ]};
+    // 日付順で挿入（新しい日付が上）
+    adminDailyData.unshift(dayEntry);
+    adminDailyData.sort((a,b)=>{
+      const toDate=s=>{const m=s.match(/(\d+)年(\d+)月(\d+)日/);return m?new Date(m[1],m[2]-1,m[3]):new Date(0);};
+      return toDate(b.date)-toDate(a.date);
+    });
+  }
+  const shiftIdxMap={open:0,mid:1,close:2};
+  const shiftEntry=dayEntry.shifts[shiftIdxMap[shiftKey]];
+  Object.assign(shiftEntry,report);
+  shiftEntry.ake=shiftEntry.ake||reporterName;
+  shiftEntry.naka=shiftEntry.naka||'';
+  const allSubmitted=dayEntry.shifts.every(s=>s.submitted);
+  dayEntry.status=allSubmitted?'提出済':'未提出';
+  renderAdminDaily();
+  saveDaily(); // スプレッドシートに保存
+  if(dateEl)dateEl.value='';
+  if(nameEl)nameEl.value='';
+  if(weatherEl)weatherEl.selectedIndex=0;
+  if(shiftEl)shiftEl.selectedIndex=0;
+  if(ryogaeEl)ryogaeEl.value='';
+  [regularEl,trendEl,eventEl,otherEl].forEach(t=>{if(t)t.value='';});
+  showSuccess('daily-success');
+}
+
+// ===== 在庫報告提出 =====
+function submitInventory(){
+  const now=new Date();const p=x=>String(x).padStart(2,'0');
+  const jst=new Date(now.toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));
+  const timeStr=`${jst.getFullYear()}/${p(jst.getMonth()+1)}/${p(jst.getDate())} ${p(jst.getHours())}:${p(jst.getMinutes())}`;
+  const staffName=currentStaff().name;
+  // ドラム値を収集
+  const rows=[...document.querySelectorAll('#inv-all-list .item-row')];
+  const stockMap={};
+  invItems.forEach((item,i)=>{
+    const row=rows[i];if(!row)return;
+    const drum=row.querySelector('.drum-wrap');
+    const val=drum?getDrumValue(drum):0;
+    stockMap[item.n]=val;
+  });
+  latestInventorySubmission={time:timeStr,reporter:staffName,data:stockMap};
+  // 管理者デイリー発注画面に反映
+  refreshAdminDailyOrder();
+  // スプレッドシートに保存
+  gasSave('inventory',[{time:timeStr,reporter:staffName,data:JSON.stringify(stockMap)}]);
+  // フォームクリア
+  document.querySelectorAll('#inv-all-list .drum-wrap').forEach(w=>{
+    const span=w.querySelector('.drum-display span');if(span)span.textContent='0';
+    w.querySelectorAll('.drum-opt').forEach((o,i)=>{o.classList.toggle('selected',i===0);});
+  });
+  document.querySelector('#page-inventory textarea').value='';
+  showSuccess('inv-success');
+}
+function refreshAdminDailyOrder(){
+  if(!latestInventorySubmission)return;
+  const {time,reporter,data}=latestInventorySubmission;
+  // info-box 更新（日付 時間 報告者名）
+  const infoBox=document.getElementById('daily-order-info-box');
+  if(infoBox)infoBox.textContent=`📌 最終更新：${time}　${reporter}`;
+  // ドリンク行を更新
+  const drinkContainer=document.getElementById('admin-daily-drink');
+  const foodContainer=document.getElementById('admin-daily-food');
+  if(drinkContainer){drinkContainer.innerHTML='';
+    dailyDrinks.forEach(item=>{
+      const updated=data[item.n]??data[item.name]??item.stock;
+      drinkContainer.appendChild(buildAdminDailyRow({...item,stock:updated}));
+    });
+  }
+  if(foodContainer){foodContainer.innerHTML='';
+    dailyFoods.forEach(item=>{
+      const updated=data[item.n]??data[item.name]??item.stock;
+      foodContainer.appendChild(buildAdminDailyRow({...item,stock:updated}));
+    });
+  }
+}
+
+// ===== 発注依頼提出 =====
+let irregIdCounter=10;
+function submitOrderRequest(){
+  const rows=[...document.querySelectorAll('#order-req-rows .order-req-row')];
+  const items=[];
+  rows.forEach(row=>{
+    const sels=row.querySelectorAll('select');
+    const cat=sels[0]?.value;const prod=sels[1]?.value;
+    if(cat&&prod)items.push({category:cat,item:prod});
+  });
+  if(!items.length){showToast('⚠️ 商品を選択してください');return;}
+  const note=document.querySelector('#page-order-request textarea')?.value.trim()||'';
+  const now=new Date();const p=x=>String(x).padStart(2,'0');
+  const dateStr=`${now.getFullYear()}/${p(now.getMonth()+1)}/${p(now.getDate())}`;
+  const staffName=currentStaff().name;
+  items.forEach(({category,item})=>{
+    irregOrders.unshift({id:++irregIdCounter,date:dateStr,reporter:staffName,category,item,note,orderedAt:null});
+  });
+  renderIrreg();
+  saveOrders(); // スプレッドシートに保存
+  // フォームクリア
+  const container=document.getElementById('order-req-rows');container.innerHTML='';addOrderRow();
+  document.querySelector('#page-order-request textarea').value='';
+  showSuccess('order-req-success');
+}
+
+// ===== 棚卸提出 =====
+function submitStocktake(){
+  const dateEl=document.getElementById('st-date');
+  const reporterEl=document.querySelector('#page-stocktake .reporter-card input[type="text"]');
+  const dateVal=dateEl?.value||'';
+  const reporterVal=reporterEl?.value.trim()||currentStaff().name;
+  // 棚卸データ収集
+  const stData={};
+  const rows=[...document.querySelectorAll('#st-body .item-row')];
+  let itemIdx=0;
+  stItems.forEach(item=>{
+    const row=rows[itemIdx];itemIdx++;
+    if(!row)return;
+    if(item.type==='drum'){
+      const drum=row.querySelector('.drum-wrap');
+      stData[item.name]=drum?getDrumValue(drum):0;
+    }else{
+      const inp=row.querySelector('input[type="number"]');
+      stData[item.name]=inp?parseInt(inp.value)||0:0;
+    }
+  });
+  // 管理者棚卸一覧を更新
+  let fmt='';
+  if(dateVal){
+    const d=new Date(dateVal);const p=x=>String(x).padStart(2,'0');
+    fmt=`${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+  }else{
+    const d=new Date();const p=x=>String(x).padStart(2,'0');
+    fmt=`${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+  const key='latest';
+  stReports[key]={date:fmt,reporter:reporterVal,data:stData};
+  // セレクトに「最新」を追加
+  const sel=document.querySelector('#page-admin-stocktake .history-select');
+  if(sel&&!sel.querySelector('option[value="latest"]')){
+    const opt=document.createElement('option');opt.value='latest';opt.textContent='最新（'+fmt.split(' ')[0]+'）';
+    sel.insertBefore(opt,sel.firstChild);
+  }
+  if(sel){sel.value='latest';}
+  renderAdminSt('latest');
+  saveStocktakeData(); // スプレッドシートに保存
+  // フォームクリア
+  document.querySelectorAll('#st-body .drum-wrap').forEach(w=>{
+    const span=w.querySelector('.drum-display span');if(span)span.textContent='0';
+    w.querySelectorAll('.drum-opt').forEach((o,i)=>o.classList.toggle('selected',i===0));
+  });
+  document.querySelectorAll('#st-body input[type="number"]').forEach(i=>i.value='');
+  showSuccess('st-success');
+}
+
+// ===== 不定期発注 アーカイブ対応（1週間）=====
+// renderIrregを上書きして1週間ルールに変更
+function renderIrreg(){
+  const today=new Date(2026,3,4);const oneWeekAgo=new Date(today);oneWeekAgo.setDate(oneWeekAgo.getDate()-7);
+  const pending=irregOrders.filter(o=>!o.orderedAt);
+  const recentDone=irregOrders.filter(o=>o.orderedAt&&o.orderedAt>=oneWeekAgo);
+  const archived=irregOrders.filter(o=>o.orderedAt&&o.orderedAt<oneWeekAgo);
+  const pl=document.getElementById('irreg-pending');pl.innerHTML='';
+  const dl=document.getElementById('irreg-done');dl.innerHTML='';
+  if(!pending.length){const e=document.createElement('div');e.className='empty-state';e.textContent='未発注の依頼はありません';pl.appendChild(e);}
+  else pending.forEach(o=>pl.appendChild(buildIrregCard(o,false)));
+  if(!recentDone.length){const e=document.createElement('div');e.className='empty-state';e.textContent='発注済みの履歴はありません';dl.appendChild(e);}
+  else recentDone.forEach(o=>dl.appendChild(buildIrregCard(o,true)));
+  // アーカイブセクション
+  let archSec=document.getElementById('irreg-archive-sec');
+  if(!archSec){
+    archSec=document.createElement('div');archSec.id='irreg-archive-sec';
+    const archLabel=document.createElement('div');archLabel.className='section-label-order';archLabel.style.marginTop='16px';archLabel.textContent='アーカイブ（1週間以上前）';
+    const archList=document.createElement('div');archList.id='irreg-archive';
+    archSec.appendChild(archLabel);archSec.appendChild(archList);
+    dl.parentElement.appendChild(archSec);
+  }
+  const archList=document.getElementById('irreg-archive');archList.innerHTML='';
+  archived.forEach(o=>archList.appendChild(buildIrregCard(o,true)));
+  // ダッシュボードの業務連絡に発注済みバッジを更新
+  updateDashOrderedBadges();
+}
+function updateDashOrderedBadges(){
+  const today=new Date(2026,3,4);const oneWeekAgo=new Date(today);oneWeekAgo.setDate(oneWeekAgo.getDate()-7);
+  const recentDone=irregOrders.filter(o=>o.orderedAt&&o.orderedAt>=oneWeekAgo);
+  let badgeArea=document.getElementById('dash-ordered-badges');
+  if(!badgeArea){
+    badgeArea=document.createElement('div');badgeArea.id='dash-ordered-badges';
+    badgeArea.style.cssText='padding:0 14px 10px';
+    const dashCard=document.querySelector('#dash-notice-list');
+    if(dashCard)dashCard.parentElement.appendChild(badgeArea);
+  }
+  badgeArea.innerHTML='';
+  recentDone.forEach(o=>{
+    const p=n=>String(n).padStart(2,'0');
+    const dateStr=o.orderedAt?`${o.orderedAt.getFullYear()}/${p(o.orderedAt.getMonth()+1)}/${p(o.orderedAt.getDate())} 発注済み`:'';
+    const tag=document.createElement('div');
+    tag.style.cssText='display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:.5px solid #f0f0f0;font-size:12px';
+    tag.innerHTML=`<span class="badge badge-done">発注済</span><span style="flex:1;color:#1a1a1a">${o.item}</span><span style="color:#aaa;font-size:11px">${dateStr}</span>`;
+    badgeArea.appendChild(tag);
+  });
+}
+
+// ===== スタッフ選択 =====
+function openStaffSelectModal(){
+  const list=document.getElementById('staff-select-list');list.innerHTML='';
+  staffList.forEach(s=>{
+    const item=document.createElement('div');
+    item.style.cssText='display:flex;align-items:center;gap:10px;padding:11px 4px;border-bottom:.5px solid #f0f0f0;cursor:pointer';
+    item.innerHTML=`<div class="avatar" style="background:${s.color};color:${s.textColor};width:32px;height:32px;font-size:11px">${s.initials}</div><div><div style="font-size:13px;font-weight:500;color:#1a1a1a">${s.name}</div><div style="font-size:11px;color:#aaa">${s.role==='admin'?'管理者':'スタッフ'}</div></div>${s.id===currentStaffId?'<span class="badge badge-done" style="margin-left:auto">選択中</span>':''}`;
+    item.addEventListener('click',()=>{currentStaffId=s.id;updateUserDisplay();closeStaffSelectModal();showToast('✓ '+s.name+'に切り替えました');});
+    list.appendChild(item);
+  });
+  document.getElementById('staff-select-modal').classList.add('open');
+}
+function closeStaffSelectModal(){document.getElementById('staff-select-modal').classList.remove('open');}
+document.getElementById('staff-select-modal').addEventListener('click',e=>{if(e.target===document.getElementById('staff-select-modal'))closeStaffSelectModal();});
+function updateUserDisplay(){
+  const s=currentStaff();
+  ['avatar-mini','avatar-full'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.textContent=s.initials;el.style.background=s.color;el.style.color=s.textColor;}
+  });
+  const nameEl=document.getElementById('user-name-full');
+  if(nameEl)nameEl.textContent=s.name;
+  const roleEl=document.getElementById('user-role-full');
+  if(roleEl)roleEl.textContent=s.role==='admin'?'管理者':'スタッフ';
+  // 日報の担当者欄を自動入力
+  const drNameEl=document.getElementById('daily-reporter-name');
+  if(drNameEl)drNameEl.value=s.name;
+  const stReporterEl=document.querySelector('#page-stocktake .reporter-card input[type="text"]');
+  if(stReporterEl)stReporterEl.value=s.name;
+  // 管理者ナビの表示制御
+  updateAdminNav();
+  // 業務連絡の確認状態を現在のスタッフで再描画
+  renderNotice();
+}
+// サイドバーのユーザーアイコンをタップでスタッフ選択（重複登録防止のためHTML側のonclickで対処）
+
+// ===== スタッフ情報管理（管理者用）=====
+let editingStaffId=null;
+function openStaffAddModal(){
+  editingStaffId=null;
+  document.getElementById('staff-manage-title').textContent='スタッフを追加';
+  document.getElementById('sm-name').value='';
+  document.getElementById('sm-role').value='staff';
+  document.getElementById('sm-delete').style.display='none';
+  document.getElementById('staff-manage-modal').classList.add('open');
+}
+function openStaffEditModal(id){
+  const s=staffList.find(x=>x.id===id);if(!s)return;
+  editingStaffId=id;
+  document.getElementById('staff-manage-title').textContent=s.name+'を編集';
+  document.getElementById('sm-name').value=s.name;
+  document.getElementById('sm-role').value=s.role;
+  document.getElementById('sm-delete').style.display='block';
+  document.getElementById('staff-manage-modal').classList.add('open');
+}
+function closeStaffManageModal(){document.getElementById('staff-manage-modal').classList.remove('open');}
+function saveStaffMember(){
+  const name=document.getElementById('sm-name').value.trim();
+  const role=document.getElementById('sm-role').value;
+  if(!name){document.getElementById('sm-name').style.borderColor='#E24B4A';return;}
+  const colors=['#E1F5EE','#FAEEDA','#FAECE7','#EEEDFE','#E6F1FB'];
+  const textColors=['#0F6E56','#633806','#712B13','#3C3489','#0C447C'];
+  if(editingStaffId){
+    const s=staffList.find(x=>x.id===editingStaffId);
+    if(s){s.name=name;s.role=role;s.initials=name.slice(0,2);}
+  }else{
+    const newId=Math.max(...staffList.map(s=>s.id))+1;
+    const ci=staffList.length%colors.length;
+    staffList.push({id:newId,name,initials:name.slice(0,2),role,color:colors[ci],textColor:textColors[ci]});
+  }
+  closeStaffManageModal();updateUserDisplay();showToast('✓ スタッフ情報を保存しました');saveStaff();
+}
+function deleteStaffMember(){
+  if(!editingStaffId)return;
+  const idx=staffList.findIndex(x=>x.id===editingStaffId);
+  if(idx>-1)staffList.splice(idx,1);
+  if(currentStaffId===editingStaffId)currentStaffId=staffList[0]?.id||1;
+  closeStaffManageModal();updateUserDisplay();showToast('🗑 スタッフを削除しました');saveStaff();
+}
+document.getElementById('staff-manage-modal').addEventListener('click',e=>{if(e.target===document.getElementById('staff-manage-modal'))closeStaffManageModal();});
+
+// ===== マニュアル編集→スタッフ画面反映 =====
+function saveManualItem(){
+  const titleField=document.getElementById('mf-title');
+  if(titleField&&!titleField.value.trim()){titleField.style.borderColor='#E24B4A';titleField.focus();return;}
+  const title=titleField?.value.trim()||'';
+  const stepsField=document.getElementById('mf-steps');
+  const steps=stepsField?.value.trim()||'';
+  const materialField=document.getElementById('mf-material');
+  const material=materialField?materialField.value.trim():'';
+  const durationField=document.getElementById('mf-duration')||document.getElementById('mf-timing')||document.getElementById('mf-frequency');
+  const sub=durationField?.value.trim()||'';
+  const badgeField=document.getElementById('mf-badge');
+  const badge=badgeField?.value||'standard';
+  // 画像は currentModalPhoto に保持済み
+  const photo=currentModalPhoto;
+  if(isEditMode&&editTarget){
+    editTarget.n=title;
+    editTarget.t=badge;
+    editTarget.s=sub;
+    editTarget.steps=steps; // 空でも上書き（意図的に消せる）
+    editTarget.material=material; // 空でも上書き（意図的に消せる）
+    if(photo)editTarget.photo=photo;
+    rebuildStaffManual();
+    buildAdminManualList(drinks,'admin-drink-list','recipe');
+    buildAdminManualList(foods,'admin-food-list','recipe');
+    Object.keys(adminManualData).forEach(cat=>{
+      buildAdminManualList(adminManualData[cat],'admin-'+cat+'-list',cat);
+    });
+  }else{
+    const newItem={n:title,t:badge,s:sub,steps:steps,material:material,photo:photo};
+    if(currentManualCat==='recipe'){
+      const subTab=document.querySelector('#admin-manual-recipe .sub-tab.active');
+      const isFoodTab=subTab&&subTab.textContent.includes('フード');
+      if(isFoodTab){foods.push(newItem);buildAdminManualList(foods,'admin-food-list','recipe');}
+      else{drinks.push(newItem);buildAdminManualList(drinks,'admin-drink-list','recipe');}
+    }else{
+      if(!adminManualData[currentManualCat])adminManualData[currentManualCat]=[];
+      adminManualData[currentManualCat].push(newItem);
+      buildAdminManualList(adminManualData[currentManualCat],'admin-'+currentManualCat+'-list',currentManualCat);
+    }
+    rebuildStaffManual();
+  }
+  closeManualModal();
+  showToast(isEditMode?'✓ 保存しました。スタッフ画面に反映されました':'✓ 追加しました。スタッフ画面に反映されました');
+  saveManual(); // スプレッドシートに保存
+}
+function deleteManualItem(){
+  if(isEditMode&&editTarget){
+    let idx=drinks.indexOf(editTarget);
+    if(idx>-1){drinks.splice(idx,1);buildAdminManualList(drinks,'admin-drink-list','recipe');}
+    else{idx=foods.indexOf(editTarget);if(idx>-1){foods.splice(idx,1);buildAdminManualList(foods,'admin-food-list','recipe');}}
+    Object.keys(adminManualData).forEach(cat=>{
+      const ai=adminManualData[cat].indexOf(editTarget);
+      if(ai>-1){adminManualData[cat].splice(ai,1);buildAdminManualList(adminManualData[cat],'admin-'+cat+'-list',cat);}
+    });
+    rebuildStaffManual();
+  }
+  closeManualModal();showToast('🗑 削除しました。スタッフ画面から削除されました');
+  saveManual(); // スプレッドシートに保存
+}
+function rebuildStaffManual(){
+  buildManualList(drinks,'manual-drink-list',true);
+  buildManualList(foods,'manual-food-list',true);
+  // 非recipeカテゴリもadminManualDataから再描画
+  ['openclose','cleaning','machine','operation','register'].forEach(cat=>{
+    buildManualList(adminManualData[cat]||[],'manual-'+cat+'-list',false);
+  });
+}
+
+function renderAdminStaffList(){
+  const list=document.getElementById('admin-staff-list');if(!list)return;
+  list.innerHTML='';
+  staffList.forEach(s=>{
+    const card=document.createElement('div');card.className='card';card.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer';
+    card.innerHTML=`<div class="avatar" style="background:${s.color};color:${s.textColor};width:36px;height:36px;font-size:12px;flex-shrink:0">${s.initials}</div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:#1a1a1a">${s.name}</div><div style="font-size:11px;color:#aaa">${s.role==='admin'?'管理者':'スタッフ'}</div></div><button class="btn-edit">編集</button>`;
+    card.querySelector('.btn-edit').addEventListener('click',e=>{e.stopPropagation();openStaffEditModal(s.id);});
+    list.appendChild(card);
+  });
+}
+
+// ===== 日報 CSV書き出し =====
+function parseReportDate(dateStr){
+  // 「2026年4月4日（土）」→ Date オブジェクト
+  const m=dateStr.match(/(\d+)年(\d+)月(\d+)日/);
+  return m?new Date(parseInt(m[1]),parseInt(m[2])-1,parseInt(m[3])):null;
+}
+function getFilteredReports(){
+  const fromVal=document.getElementById('report-date-from')?.value;
+  const toVal=document.getElementById('report-date-to')?.value;
+  const from=fromVal?new Date(fromVal):null;
+  const to=toVal?new Date(toVal):null;
+  if(to)to.setHours(23,59,59); // 終了日は当日末まで
+  return adminDailyData.filter(rep=>{
+    const d=parseReportDate(rep.date);
+    if(!d)return true;
+    if(from&&d<from)return false;
+    if(to&&d>to)return false;
+    return true;
+  });
+}
+function exportReportCSV(){
+  const rows=getFilteredReports();
+  if(!rows.length){showToast('⚠️ 対象の日報がありません');return;}
+  // BOM付きUTF-8（ExcelがShift-JISと誤認しないよう）
+  const BOM='\uFEFF';
+  const headers=['日付','シフト','報告者名','天気','両替金額','常連・リピーター情報','お客様の入店傾向','ワークショップ・イベント','その他・特記事項'];
+  const escape=v=>{
+    const s=String(v||'').replace(/"/g,'""');
+    return /[,"\n]/.test(s)?`"${s}"`:s;
+  };
+  const lines=[headers.map(escape).join(',')];
+  rows.forEach(rep=>{
+    rep.shifts.forEach(sh=>{
+      if(!sh.submitted)return; // 未提出はスキップ
+      lines.push([
+        escape(rep.date),
+        escape(sh.label||sh.shiftLabel||''),
+        escape(sh.name||''),
+        escape(sh.weather||''),
+        escape(sh.ryogae||''),
+        escape(sh.regular||''),
+        escape(sh.trend||''),
+        escape(sh.event||''),
+        escape(sh.other||''),
+      ].join(','));
+    });
+  });
+  const csv=BOM+lines.join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const from=document.getElementById('report-date-from')?.value||'';
+  const to=document.getElementById('report-date-to')?.value||'';
+  const suffix=from&&to?`_${from}_${to}`:from?`_${from}以降`:to?`_${to}以前`:'_全件';
+  a.href=url;a.download=`日報${suffix}.csv`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`✓ ${lines.length-1}件の日報をCSVで書き出しました`);
+}
+
+// ===== 日報削除 =====
+function openDeleteReportModal(){
+  // 書き出し側の日付をコピー
+  const fromVal=document.getElementById('report-date-from')?.value||'';
+  const toVal=document.getElementById('report-date-to')?.value||'';
+  const df=document.getElementById('delete-date-from');
+  const dt=document.getElementById('delete-date-to');
+  if(df)df.value=fromVal;
+  if(dt)dt.value=toVal;
+  updateDeletePreview();
+  df?.addEventListener('change',updateDeletePreview);
+  dt?.addEventListener('change',updateDeletePreview);
+  document.getElementById('delete-report-modal').classList.add('open');
+}
+function updateDeletePreview(){
+  const fromVal=document.getElementById('delete-date-from')?.value;
+  const toVal=document.getElementById('delete-date-to')?.value;
+  const from=fromVal?new Date(fromVal):null;
+  const to=toVal?new Date(toVal):null;
+  if(to)to.setHours(23,59,59);
+  const count=adminDailyData.filter(rep=>{
+    const d=parseReportDate(rep.date);if(!d)return true;
+    if(from&&d<from)return false;
+    if(to&&d>to)return false;
+    return true;
+  }).length;
+  const prev=document.getElementById('delete-report-preview');
+  if(prev){
+    prev.style.display='block';
+    const label=from||to?`${fromVal||''}〜${toVal||''}の期間`:'全期間';
+    prev.textContent=`⚠️ ${label}の日報 ${count}件が削除されます`;
+  }
+}
+function closeDeleteReportModal(){
+  document.getElementById('delete-report-modal').classList.remove('open');
+}
+function confirmDeleteReport(){
+  const fromVal=document.getElementById('delete-date-from')?.value;
+  const toVal=document.getElementById('delete-date-to')?.value;
+  const from=fromVal?new Date(fromVal):null;
+  const to=toVal?new Date(toVal):null;
+  if(to)to.setHours(23,59,59);
+  const before=adminDailyData.length;
+  for(let i=adminDailyData.length-1;i>=0;i--){
+    const d=parseReportDate(adminDailyData[i].date);
+    if(!d){adminDailyData.splice(i,1);continue;}
+    if(from&&d<from)continue;
+    if(to&&d>to)continue;
+    adminDailyData.splice(i,1);
+  }
+  const deleted=before-adminDailyData.length;
+  closeDeleteReportModal();
+  renderAdminDaily();
+  saveDaily(); // スプレッドシートに保存
+  showToast(`🗑 ${deleted}件の日報を削除しました`);
+}
+document.getElementById('delete-report-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('delete-report-modal'))closeDeleteReportModal();
+});
+
+// ===== 日報操作の期間プリセット（ページ表示時に今月を自動セット）=====
+function initReportDateRange(){
+  const jst=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));
+  const y=jst.getFullYear(),m=jst.getMonth();
+  const firstDay=new Date(y,m,1);
+  const lastDay=new Date(y,m+1,0);
+  const fmt=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const fromEl=document.getElementById('report-date-from');
+  const toEl=document.getElementById('report-date-to');
+  if(fromEl&&!fromEl.value)fromEl.value=fmt(firstDay);
+  if(toEl&&!toEl.value)toEl.value=fmt(lastDay);
+}
+
+// ===== Google スプレッドシート連携 =====
+
+const GAS_KEY = 'cafe_manager_gas_url';
+let GAS_URL = localStorage.getItem(GAS_KEY) || '';
+let isSyncing = false;
+
+// ---- データをまとめて取得 ----
+async function gasLoad() {
+  if (!GAS_URL) return false;
+  try {
+    showSyncStatus('読み込み中…');
+    const res = await fetch(GAS_URL + '?t=' + Date.now()); // キャッシュ防止
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error);
+    const d = json.data;
+
+    // 日報
+    if (d.dailyReports && d.dailyReports.length > 0) {
+      adminDailyData.length = 0;
+      d.dailyReports.forEach(r => {
+        // shifts は JSON文字列の場合がある
+        if (typeof r.shifts === 'string') { try { r.shifts = JSON.parse(r.shifts); } catch(e){} }
+        adminDailyData.push(r);
+      });
+    }
+    // 業務連絡
+    if (d.noticeData && d.noticeData.length > 0) {
+      noticeData.length = 0;
+      d.noticeData.forEach(r => {
+        if (typeof r.confirmed === 'string') { try { r.confirmed = JSON.parse(r.confirmed); } catch(e){ r.confirmed=[]; } }
+        if (typeof r.photos === 'string') { try { r.photos = JSON.parse(r.photos); } catch(e){ r.photos=[]; } }
+        noticeData.push(r);
+      });
+    }
+    // 発注依頼
+    if (d.irregOrders && d.irregOrders.length > 0) {
+      irregOrders.length = 0;
+      d.irregOrders.forEach(r => {
+        if (r.orderedAt && r.orderedAt !== 'null') r.orderedAt = new Date(r.orderedAt);
+        else r.orderedAt = null;
+        irregOrders.push(r);
+      });
+    }
+    // 在庫報告（最新を復元）
+    if (d.inventory && d.inventory.length > 0) {
+      const latest = d.inventory[d.inventory.length - 1];
+      if (latest) {
+        let stockData = latest.data;
+        if (typeof stockData === 'string') { try { stockData = JSON.parse(stockData); } catch(e){} }
+        latestInventorySubmission = { time: latest.time, reporter: latest.reporter, data: stockData };
+        refreshAdminDailyOrder();
+      }
+    }
+    // 棚卸
+    if (d.stocktake && d.stocktake.length > 0) {
+      d.stocktake.forEach(r => {
+        if (!r.key) return;
+        let val = r.value;
+        if (typeof val === 'string') { try { val = JSON.parse(val); } catch(e){} }
+        stReports[r.key] = val;
+      });
+    }
+    // スタッフ
+    if (d.staffList && d.staffList.length > 0) {
+      staffList.length = 0;
+      d.staffList.forEach(r => {
+        if (r.id) r.id = Number(r.id);
+        staffList.push(r);
+      });
+      // currentStaffIdが存在しない場合リセット
+      if (!staffList.find(s => s.id === currentStaffId)) currentStaffId = staffList[0]?.id || 1;
+    }
+    // マニュアル（スプレッドシートの値で既存データを上書き）
+    if (d.manualData && d.manualData.length > 0) {
+      d.manualData.forEach(r => {
+        if (r.type === 'drink') {
+          const idx = drinks.findIndex(x => x.n === r.n);
+          if (idx > -1) Object.assign(drinks[idx], r);
+          else drinks.push(r);
+        } else if (r.type === 'food') {
+          const idx = foods.findIndex(x => x.n === r.n);
+          if (idx > -1) Object.assign(foods[idx], r);
+          else foods.push(r);
+        } else if (r.cat && adminManualData[r.cat]) {
+          const idx = adminManualData[r.cat].findIndex(x => x.n === r.n);
+          if (idx > -1) Object.assign(adminManualData[r.cat][idx], r);
+        }
+      });
+    }
+
+    showSyncStatus('✓ 同期完了', true);
+    return true;
+  } catch(e) {
+    showSyncStatus('⚠️ 読み込み失敗', false, true);
+    console.error('GAS load error:', e);
+    return false;
+  }
+}
+
+// ---- データをまとめて保存 ----
+async function gasSave(sheetKey, data) {
+  if (!GAS_URL) return;
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'save', sheet: sheetKey, data }),
+    });
+  } catch(e) {
+    console.error('GAS save error:', e);
+  }
+}
+
+// 各データの保存ヘルパー
+function saveDaily()   { gasSave('dailyReports', adminDailyData); }
+function saveNotice()  { gasSave('noticeData', noticeData); }
+function saveOrders()  { gasSave('irregOrders', irregOrders.map(o=>({...o,orderedAt:o.orderedAt?o.orderedAt.toISOString():null}))); }
+function saveStaff()   { gasSave('staffList', staffList); }
+function saveManual()  {
+  const rows = [];
+  drinks.forEach(d => rows.push({...d, type:'drink'}));
+  foods.forEach(d => rows.push({...d, type:'food'}));
+  Object.keys(adminManualData).forEach(cat =>
+    adminManualData[cat].forEach(d => rows.push({...d, cat}))
+  );
+  gasSave('manualData', rows);
+}
+function saveStocktakeData() {
+  const rows = Object.entries(stReports).map(([key,value]) => ({key, value}));
+  gasSave('stocktake', rows);
+}
+
+// ---- 同期ステータス表示 ----
+function showSyncStatus(msg, success, error) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = error ? '#712B13' : success ? '#0F6E56' : '#666';
+  if (success || error) setTimeout(() => { el.textContent = ''; }, 3000);
+}
+
+// ---- GAS URL 設定モーダル ----
+function openGasSettingModal() {
+  document.getElementById('gas-url-input').value = GAS_URL;
+  document.getElementById('gas-setting-modal').classList.add('open');
+}
+function closeGasSettingModal() {
+  document.getElementById('gas-setting-modal').classList.remove('open');
+}
+async function saveGasUrl() {
+  const url = document.getElementById('gas-url-input').value.trim();
+  if (!url) { alert('URLを入力してください'); return; }
+  GAS_URL = url;
+  localStorage.setItem(GAS_KEY, url);
+  closeGasSettingModal();
+  const ok = await gasLoad();
+  if (ok) {
+    renderAdminDaily(); renderNotice(); renderDashboard();
+    renderIrreg(); rebuildStaffManual(); updateUserDisplay();
+    renderNoticeEditList();
+    showToast('✓ スプレッドシートと連携しました');
+  }
+}
+async function syncNow() {
+  if (!GAS_URL) { openGasSettingModal(); return; }
+  const ok = await gasLoad();
+  if (ok) {
+    renderAdminDaily(); renderNotice(); renderDashboard();
+    renderIrreg(); rebuildStaffManual(); updateUserDisplay();
+    renderNoticeEditList();
+    showToast('✓ データを同期しました');
+  }
+}
+
+// ===== 初期化 =====
+
+// 日時リアルタイム更新（日本時間）
+function updateTopbarDate(){
+  const now=new Date();
+  const jst=new Date(now.toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));
+  const days=['日','月','火','水','木','金','土'];
+  const y=jst.getFullYear();
+  const mo=jst.getMonth()+1;
+  const d=jst.getDate();
+  const dow=days[jst.getDay()];
+  const h=String(jst.getHours()).padStart(2,'0');
+  const mi=String(jst.getMinutes()).padStart(2,'0');
+  const el=document.getElementById('topbar-date');
+  if(el)el.textContent=`${y}年${mo}月${d}日（${dow}） ${h}:${mi}`;
+}
+updateTopbarDate();
+setInterval(updateTopbarDate,60000);
+
+// GAS URL表示を更新
+function updateGasUrlDisplay(){
+  const el=document.getElementById('gas-url-display');
+  if(!el)return;
+  el.textContent=GAS_URL?'接続済み: '+GAS_URL.slice(0,40)+'…':'未設定（タップして設定）';
+}
+
+// GAS設定モーダルのcloseイベント
+document.getElementById('gas-setting-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('gas-setting-modal'))closeGasSettingModal();
+});
+
+// ☁️ボタンのツールチップ：URL未設定なら設定モーダルを開く
+document.getElementById('sync-btn').addEventListener('click',()=>{
+  if(!GAS_URL)openGasSettingModal();
+});
+
+// 日報の日付を今日にセット
+setDailyToday();
+
+// スタッフ側マニュアルを全カテゴリ描画
+rebuildStaffManual();
+
+updateUserDisplay();
+renderIrreg();
+renderNoticeEditList();
+
+// GAS URL表示を更新
+updateGasUrlDisplay();
+
+// スプレッドシートが設定済みなら起動時に自動読み込み
+if(GAS_URL){
+  gasLoad().then(ok=>{
+    if(ok){
+      renderAdminDaily();renderNotice();renderDashboard();
+      renderIrreg();rebuildStaffManual();updateUserDisplay();
+      renderNoticeEditList();
+    }
+  });
+}
 </script>
 </body></html>
