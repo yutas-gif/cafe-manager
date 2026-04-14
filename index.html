@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Café Manager</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -8,7 +11,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
 .app{display:flex;height:100vh;overflow:hidden}
 
 /* SIDEBAR - コンパクト */
-.sidebar{width:64px;background:#fff;border-right:.5px solid #e0e0e0;display:flex;flex-direction:column;flex-shrink:0;transition:width .25s ease;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.sidebar{width:64px;background:#fff;border-right:.5px solid #e0e0e0;display:flex;flex-direction:column;flex-shrink:0;transition:width .25s ease;overflow:hidden;height:100%}
+.sidebar-nav-scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.sidebar-nav-scroll::-webkit-scrollbar{display:none}
 .sidebar.expanded{width:200px}
 .sidebar-toggle{width:100%;padding:14px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;border-bottom:.5px solid #e8e8e8;background:#fff;border:none;flex-shrink:0}
 .sidebar-toggle:hover{background:#f5f5f5}
@@ -39,7 +44,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
 .nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:#1D9E75;border-radius:0 3px 3px 0}
 .sidebar.expanded .nav-item.active::before{display:none}
 
-.user-area{margin-top:auto;padding:8px 0;border-top:.5px solid #e8e8e8;flex-shrink:0;position:sticky;bottom:0;background:#fff;z-index:10}
+.user-area{padding:8px 0;border-top:.5px solid #e8e8e8;flex-shrink:0;background:#fff;z-index:10}
 .role-toggle-mini{display:none!important}
 .role-toggle-full{display:none!important}
 .toggle-pill{display:none!important}
@@ -382,27 +387,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
     <span class="logo-icon">☕</span>
     <div class="logo-text"><div class="logo-title">Café Manager</div><div class="logo-sub">業務管理システム</div></div>
   </div>
-  <div class="nav-section">
-    <div class="nav-label">スタッフ</div>
-    <div class="nav-item active" data-page="dashboard"><span class="nav-icon">🏠</span><span class="nav-text">ダッシュボード</span></div>
-    <div class="nav-item" data-page="daily-report"><span class="nav-icon">📝</span><span class="nav-text">日報報告</span></div>
-    <div class="nav-item" data-page="inventory"><span class="nav-icon">📦</span><span class="nav-text">在庫報告</span></div>
-    <div class="nav-item" data-page="order-request"><span class="nav-icon">🛒</span><span class="nav-text">発注依頼</span></div>
-    <div class="nav-item" data-page="stocktake"><span class="nav-icon">🔢</span><span class="nav-text">棚卸</span></div>
-  </div>
-  <div class="nav-section">
-    <div class="nav-label">情報</div>
-    <div class="nav-item" data-page="notice"><span class="nav-icon">📢</span><span class="nav-text">業務連絡</span></div>
-    <div class="nav-item" data-page="manual"><span class="nav-icon">📖</span><span class="nav-text">マニュアル</span></div>
-  </div>
-  <div class="nav-section admin-nav" id="admin-nav">
-    <div class="nav-label">管理者</div>
-    <div class="nav-item" data-page="admin-reports"><span class="nav-icon">📊</span><span class="nav-text">報告一覧</span></div>
-    <div class="nav-item" data-page="admin-orders"><span class="nav-icon">📋</span><span class="nav-text">発注管理</span></div>
-    <div class="nav-item" data-page="admin-stocktake"><span class="nav-icon">📦</span><span class="nav-text">棚卸一覧</span></div>
-    <div class="nav-item" data-page="admin-notice-add"><span class="nav-icon">📣</span><span class="nav-text">業務連絡 追加</span></div>
-    <div class="nav-item" data-page="admin-manual"><span class="nav-icon">✏️</span><span class="nav-text">マニュアル編集</span></div>
-    <div class="nav-item" data-page="admin-staff"><span class="nav-icon">👥</span><span class="nav-text">スタッフ管理</span></div>
+  <div class="sidebar-nav-scroll">
+    <div class="nav-section">
+      <div class="nav-label">スタッフ</div>
+      <div class="nav-item active" data-page="dashboard"><span class="nav-icon">🏠</span><span class="nav-text">ダッシュボード</span></div>
+      <div class="nav-item" data-page="daily-report"><span class="nav-icon">📝</span><span class="nav-text">日報報告</span></div>
+      <div class="nav-item" data-page="inventory"><span class="nav-icon">📦</span><span class="nav-text">在庫報告</span></div>
+      <div class="nav-item" data-page="order-request"><span class="nav-icon">🛒</span><span class="nav-text">発注依頼</span></div>
+      <div class="nav-item" data-page="stocktake"><span class="nav-icon">🔢</span><span class="nav-text">棚卸</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">情報</div>
+      <div class="nav-item" data-page="notice"><span class="nav-icon">📢</span><span class="nav-text">業務連絡</span></div>
+      <div class="nav-item" data-page="manual"><span class="nav-icon">📖</span><span class="nav-text">マニュアル</span></div>
+    </div>
+    <div class="nav-section admin-nav" id="admin-nav">
+      <div class="nav-label">管理者</div>
+      <div class="nav-item" data-page="admin-reports"><span class="nav-icon">📊</span><span class="nav-text">報告一覧</span></div>
+      <div class="nav-item" data-page="admin-orders"><span class="nav-icon">📋</span><span class="nav-text">発注管理</span></div>
+      <div class="nav-item" data-page="admin-stocktake"><span class="nav-icon">📦</span><span class="nav-text">棚卸一覧</span></div>
+      <div class="nav-item" data-page="admin-notice-add"><span class="nav-icon">📣</span><span class="nav-text">業務連絡 追加</span></div>
+      <div class="nav-item" data-page="admin-manual"><span class="nav-icon">✏️</span><span class="nav-text">マニュアル編集</span></div>
+      <div class="nav-item" data-page="admin-staff"><span class="nav-icon">👥</span><span class="nav-text">スタッフ管理</span></div>
+    </div>
   </div>
   <div class="user-area">
     <div class="user-card-mini"><div class="avatar" id="avatar-mini" style="background:#E1F5EE;color:#0F6E56;width:28px;height:28px;font-size:10px;cursor:pointer" onclick="openStaffSelectModal()">田中</div></div>
@@ -2278,6 +2285,9 @@ updateGasUrlDisplay();
 
 // スプレッドシートが設定済みなら起動時に自動読み込み
 if(GAS_URL){
+  // ローカルストレージのURLを再確認（別端末でも読む）
+  const storedUrl = localStorage.getItem(GAS_KEY);
+  if(storedUrl) GAS_URL = storedUrl;
   gasLoad().then(ok=>{
     if(ok){
       renderAdminDaily();renderNotice();renderDashboard();
