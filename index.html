@@ -366,7 +366,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
 .preview-card{background:#f9f9f6;border:.5px solid #e0e0e0;border-radius:10px;padding:12px;margin-top:12px}
 .preview-label{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
 .preview-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;margin-bottom:5px}
-.preview-badge.important{background:#EEEDFE;color:#3C3489}
+.badge-schedule{background:#FFF8E1;color:#E65100;border:.5px solid #FFB74D}
+.preview-badge.schedule{background:#FFF8E1;color:#E65100}
 .preview-badge.info{background:#E6F1FB;color:#0C447C}
 .preview-badge.share{background:#EAF3DE;color:#27500A}
 .preview-title{font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:3px}
@@ -589,9 +590,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
     <div class="history-bar">
       <span class="history-label">棚卸日：</span>
       <select class="history-select" onchange="renderAdminSt(this.value)">
-        <option value="2026-03-31">2026年3月31日</option>
-        <option value="2026-02-28">2026年2月28日</option>
-        <option value="2026-01-31">2026年1月31日</option>
+        <option value="">（データなし）</option>
       </select>
     </div>
     <div class="meta-card-sm">
@@ -615,7 +614,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
       <div class="section-label-sm">基本設定</div>
       <div class="grid-2">
         <div class="form-group"><label class="form-label">カテゴリ</label><select class="form-input form-select" id="notice-category" onchange="onNoticeCategoryChange()"><option value="notice">業務連絡</option><option value="limited">期間限定共有</option></select></div>
-        <div class="form-group"><label class="form-label">バッジ</label><select class="form-input form-select" id="notice-badge" onchange="updateNoticePreview()"><option value="important">重要</option><option value="share">共有</option><option value="info">お知らせ</option></select></div>
+        <div class="form-group"><label class="form-label">バッジ</label><select class="form-input form-select" id="notice-badge" onchange="updateNoticePreview()"><option value="important">重要</option><option value="share">共有</option><option value="info">お知らせ</option><option value="schedule">予定</option></select></div>
       </div>
       <div class="period-row" id="period-row">
         <div class="form-group"><label class="form-label">開始日</label><input class="form-input" type="date" id="period-start" onchange="updateNoticePreview()"></div>
@@ -664,7 +663,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
   <div class="modal-overlay" id="notice-edit-modal">
     <div class="modal">
       <div class="modal-title"><span id="notice-edit-modal-title">投稿を編集</span><button class="modal-close" onclick="closeNoticeEditModal()">×</button></div>
-      <div class="form-group"><label class="form-label">バッジ</label><select class="form-input form-select" id="notice-edit-badge"><option value="important">重要</option><option value="share">共有</option><option value="info">お知らせ</option></select></div>
+      <div class="form-group"><label class="form-label">バッジ</label><select class="form-input form-select" id="notice-edit-badge"><option value="important">重要</option><option value="share">共有</option><option value="info">お知らせ</option><option value="schedule">予定</option></select></div>
       <div class="form-group"><label class="form-label">タイトル</label><input class="form-input" type="text" id="notice-edit-title"></div>
       <div class="form-group"><label class="form-label">本文</label><textarea class="form-input form-textarea" id="notice-edit-body"></textarea></div>
       <div class="modal-actions">
@@ -830,11 +829,11 @@ const dailyFoods=[{name:'シフォン',stock:3,unit:'個'},{name:'ケーキ類',
 const orderCats={'商品提供消耗品':['ラップ','ペーパーフィルター白色','おしぼり','木のマドラー','ショッパー','試飲用紙コップ'],'その他消耗品':['マスキングテープ','食器用洗剤','手洗い用洗剤','白色ゴミ袋','黒色ゴミ袋','BOXティッシュ','レジロール'],'トイレ用消耗品':['トイレットペーパー','トイレ用洗剤','トイレ用掃除シート'],'コーヒー豆関係':['グアテマラ（JR）','コロンビア（JR）','ブラジル（JR）','オオイマチブレンド（オブスキュラ）','ペルー（JR）','エルサルバドル（JR）','エチオピアW（JR）','エチオピアN（JR）','メキシコデカフェ（オブスキュラ）'],'シロップ／ソース':['キャラメルシロップ（トラーニ）','キャラメルソース（トラーニ）','チョコレートソース（トラーニ）','アガベシロップ','抹茶パウダー'],'カップ／リッド／ストロー':['ストロー（アスクル）','アイスMカップ（サンナップ）','アイスLカップ（サンナップ）','ホットMカップ（サンナップ）','ホットLカップ（サンナップ）','アイスリッド（サンナップ）','スリーブ（サンナップ）'],'ギフト':['黒色ギフトボックス 大（ニコノス）','黒色ギフトボックス 小（ニコノス）','透明ボックス 大（ニコノス）','透明ボックス 小（ニコノス）']};
 const stCats=[{icon:'☕',title:'コーヒー豆関係',items:[{name:'グアテマラ（JR）',unit:'kg'},{name:'コロンビア（JR）',unit:'kg'},{name:'ブラジル（JR）',unit:'kg'},{name:'オオイマチブレンド（オブスキュラ）',unit:'kg'},{name:'ペルー（JR）',unit:'kg'},{name:'エルサルバドル（JR）',unit:'kg'},{name:'エチオピアW（JR）',unit:'kg'},{name:'エチオピアN（JR）',unit:'kg'},{name:'メキシコデカフェ（オブスキュラ）',unit:'kg'},{name:'ドリップバッグ オオイマチブレンド',unit:'個'},{name:'ドリップバッグ デカフェ',unit:'個'},{name:'豆袋（ゴールド）',unit:'枚'},{name:'豆袋（白）',unit:'枚'},{name:'豆小売り用裏ラベル',unit:'枚'}]},{icon:'🍯',title:'シロップ／ソース・商品作成素材',items:[{name:'キャラメルシロップ（トラーニ）',unit:'本'},{name:'キャラメルソース（トラーニ）',unit:'本'},{name:'チョコレートソース（トラーニ）',unit:'本'},{name:'アガベシロップ（富澤商店）',unit:'本'},{name:'ココアパウダー（富澤商店）',unit:'個'},{name:'ラスベリーフレーク（富澤商店）',unit:'本'},{name:'ストロベリーフレーク（富澤商店）',unit:'個'},{name:'ほうじ茶パウダー（富澤商店）',unit:'個'},{name:'抹茶パウダー（富澤商店）',unit:'個'},{name:'チャイ茶葉（PRANA CHAI）',unit:'個'}]},{icon:'🥤',title:'カップ／リッド／ストロー',items:[{name:'ストロー（アスクル）',unit:'袋'},{name:'ストロースプーン型（アスクル）',unit:'袋'},{name:'アイスMカップ（サンナップ）',unit:'本'},{name:'アイスLカップ（サンナップ）',unit:'本'},{name:'ホットMカップ（サンナップ）',unit:'本'},{name:'ホットLカップ（サンナップ）',unit:'本'},{name:'アイスリッド（サンナップ）',unit:'本'},{name:'ホットMリッド（サンナップ）',unit:'本'},{name:'ホットLリッド（サンナップ）',unit:'本'},{name:'スリーブ（サンナップ）',unit:'本'}]},{icon:'🎁',title:'ギフト',items:[{name:'黒色ギフトボックス 大（ニコノス）',unit:'個'},{name:'黒色ギフトボックス 小（ニコノス）',unit:'個'},{name:'ギフト用PARKロゴ入り紙袋（ニコノス）',unit:'枚'},{name:'透明ボックス 大（ニコノス）',unit:'個'},{name:'透明ボックス 小（ニコノス）',unit:'個'},{name:'ラッピング袋茶色 大（ニコノス）',unit:'枚'},{name:'ラッピング袋赤色 小（ニコノス）',unit:'枚'}]}];
 const stItems=[{name:'グアテマラ（JR）',unit:'kg',type:'drum',max:10},{name:'コロンビア（JR）',unit:'kg',type:'drum',max:10},{name:'ブラジル（JR）',unit:'kg',type:'drum',max:10},{name:'オオイマチブレンド（オブスキュラ）',unit:'kg',type:'drum',max:10},{name:'ペルー（JR）',unit:'kg',type:'drum',max:10},{name:'エルサルバドル（JR）',unit:'kg',type:'drum',max:10},{name:'エチオピアW（JR）',unit:'kg',type:'drum',max:10},{name:'エチオピアN（JR）',unit:'kg',type:'drum',max:10},{name:'メキシコデカフェ（オブスキュラ）',unit:'kg',type:'drum',max:10},{name:'ドリップバッグ オオイマチブレンド',unit:'個',type:'free'},{name:'ドリップバッグ デカフェ',unit:'個',type:'free'},{name:'豆袋（ゴールド）',unit:'枚',type:'free'},{name:'豆袋（白）',unit:'枚',type:'free'},{name:'豆小売り用裏ラベル',unit:'枚',type:'free'},{name:'キャラメルシロップ（トラーニ）',unit:'本',type:'drum',max:10},{name:'キャラメルソース（トラーニ）',unit:'本',type:'drum',max:10},{name:'チョコレートソース（トラーニ）',unit:'本',type:'drum',max:10},{name:'アガベシロップ（富澤商店）',unit:'本',type:'drum',max:10},{name:'ココアパウダー（富澤商店）',unit:'個',type:'drum',max:5},{name:'ラスベリーフレーク（富澤商店）',unit:'本',type:'drum',max:10},{name:'ストロベリーフレーク（富澤商店）',unit:'個',type:'drum',max:5},{name:'ほうじ茶パウダー（富澤商店）',unit:'個',type:'drum',max:5},{name:'抹茶パウダー（富澤商店）',unit:'個',type:'drum',max:5},{name:'チャイ茶葉（PRANA CHAI）',unit:'個',type:'drum',max:20},{name:'ストロー（アスクル）',unit:'袋',type:'drum',max:5},{name:'ストロースプーン型（アスクル）',unit:'袋',type:'drum',max:5},{name:'アイスMカップ（サンナップ）',unit:'本',type:'free'},{name:'アイスLカップ（サンナップ）',unit:'本',type:'free'},{name:'ホットMカップ（サンナップ）',unit:'本',type:'free'},{name:'ホットLカップ（サンナップ）',unit:'本',type:'free'},{name:'アイスリッド（サンナップ）',unit:'本',type:'free'},{name:'ホットMリッド（サンナップ）',unit:'本',type:'free'},{name:'ホットLリッド（サンナップ）',unit:'本',type:'free'},{name:'スリーブ（サンナップ）',unit:'本',type:'free'},{name:'黒色ギフトボックス 大（ニコノス）',unit:'個',type:'drum',max:20},{name:'黒色ギフトボックス 小（ニコノス）',unit:'個',type:'drum',max:20},{name:'ギフト用PARKロゴ入り紙袋（ニコノス）',unit:'枚',type:'free'},{name:'透明ボックス 大（ニコノス）',unit:'個',type:'free'},{name:'透明ボックス 小（ニコノス）',unit:'個',type:'free'},{name:'ラッピング袋茶色 大（ニコノス）',unit:'枚',type:'free'},{name:'ラッピング袋赤色 小（ニコノス）',unit:'枚',type:'free'}];
-const stReports={'2026-03-31':{date:'2026/3/31 21:45',reporter:'田中 葵',data:{'グアテマラ（JR）':8,'コロンビア（JR）':5,'ブラジル（JR）':12,'オオイマチブレンド（オブスキュラ）':3,'ペルー（JR）':7,'エルサルバドル（JR）':4,'エチオピアW（JR）':6,'エチオピアN（JR）':2,'メキシコデカフェ（オブスキュラ）':1,'ドリップバッグ オオイマチブレンド':15,'ドリップバッグ デカフェ':8,'豆袋（ゴールド）':20,'豆袋（白）':18,'豆小売り用裏ラベル':30,'キャラメルシロップ（トラーニ）':3,'キャラメルソース（トラーニ）':2,'チョコレートソース（トラーニ）':4,'アガベシロップ（富澤商店）':5,'ココアパウダー（富澤商店）':2,'ラスベリーフレーク（富澤商店）':1,'ストロベリーフレーク（富澤商店）':3,'ほうじ茶パウダー（富澤商店）':4,'抹茶パウダー（富澤商店）':6,'チャイ茶葉（PRANA CHAI）':8,'ストロー（アスクル）':4,'ストロースプーン型（アスクル）':3,'アイスMカップ（サンナップ）':180,'アイスLカップ（サンナップ）':220,'ホットMカップ（サンナップ）':300,'ホットLカップ（サンナップ）':150,'アイスリッド（サンナップ）':200,'ホットMリッド（サンナップ）':280,'ホットLリッド（サンナップ）':120,'スリーブ（サンナップ）':300,'黒色ギフトボックス 大（ニコノス）':4,'黒色ギフトボックス 小（ニコノス）':6,'ギフト用PARKロゴ入り紙袋（ニコノス）':10,'透明ボックス 大（ニコノス）':3,'透明ボックス 小（ニコノス）':5,'ラッピング袋茶色 大（ニコノス）':8,'ラッピング袋赤色 小（ニコノス）':7}},'2026-02-28':{date:'2026/2/28 21:30',reporter:'鈴木 健太',data:{'グアテマラ（JR）':5,'コロンビア（JR）':3,'ブラジル（JR）':8,'オオイマチブレンド（オブスキュラ）':2,'ペルー（JR）':4,'エルサルバドル（JR）':6,'エチオピアW（JR）':3,'エチオピアN（JR）':0,'メキシコデカフェ（オブスキュラ）':0,'ドリップバッグ オオイマチブレンド':10,'ドリップバッグ デカフェ':5,'豆袋（ゴールド）':15,'豆袋（白）':12,'豆小売り用裏ラベル':25,'キャラメルシロップ（トラーニ）':2,'キャラメルソース（トラーニ）':1,'チョコレートソース（トラーニ）':3,'アガベシロップ（富澤商店）':4,'ココアパウダー（富澤商店）':1,'ラスベリーフレーク（富澤商店）':0,'ストロベリーフレーク（富澤商店）':2,'ほうじ茶パウダー（富澤商店）':3,'抹茶パウダー（富澤商店）':4,'チャイ茶葉（PRANA CHAI）':5,'ストロー（アスクル）':2,'ストロースプーン型（アスクル）':1,'アイスMカップ（サンナップ）':100,'アイスLカップ（サンナップ）':150,'ホットMカップ（サンナップ）':200,'ホットLカップ（サンナップ）':80,'アイスリッド（サンナップ）':120,'ホットMリッド（サンナップ）':180,'ホットLリッド（サンナップ）':60,'スリーブ（サンナップ）':200,'黒色ギフトボックス 大（ニコノス）':2,'黒色ギフトボックス 小（ニコノス）':3,'ギフト用PARKロゴ入り紙袋（ニコノス）':6,'透明ボックス 大（ニコノス）':1,'透明ボックス 小（ニコノス）':3,'ラッピング袋茶色 大（ニコノス）':4,'ラッピング袋赤色 小（ニコノス）':5}},'2026-01-31':{date:'2026/1/31 22:00',reporter:'中村 美咲',data:{'グアテマラ（JR）':10,'コロンビア（JR）':8,'ブラジル（JR）':15,'オオイマチブレンド（オブスキュラ）':5,'ペルー（JR）':9,'エルサルバドル（JR）':7,'エチオピアW（JR）':4,'エチオピアN（JR）':3,'メキシコデカフェ（オブスキュラ）':2,'ドリップバッグ オオイマチブレンド':20,'ドリップバッグ デカフェ':12,'豆袋（ゴールド）':30,'豆袋（白）':25,'豆小売り用裏ラベル':50,'キャラメルシロップ（トラーニ）':5,'キャラメルソース（トラーニ）':4,'チョコレートソース（トラーニ）':6,'アガベシロップ（富澤商店）':7,'ココアパウダー（富澤商店）':3,'ラスベリーフレーク（富澤商店）':2,'ストロベリーフレーク（富澤商店）':4,'ほうじ茶パウダー（富澤商店）':5,'抹茶パウダー（富澤商店）':8,'チャイ茶葉（PRANA CHAI）':12,'ストロー（アスクル）':5,'ストロースプーン型（アスクル）':4,'アイスMカップ（サンナップ）':250,'アイスLカップ（サンナップ）':280,'ホットMカップ（サンナップ）':300,'ホットLカップ（サンナップ）':200,'アイスリッド（サンナップ）':250,'ホットMリッド（サンナップ）':300,'ホットLリッド（サンナップ）':180,'スリーブ（サンナップ）':300,'黒色ギフトボックス 大（ニコノス）':6,'黒色ギフトボックス 小（ニコノス）':8,'ギフト用PARKロゴ入り紙袋（ニコノス）':12,'透明ボックス 大（ニコノス）':5,'透明ボックス 小（ニコノス）':7,'ラッピング袋茶色 大（ニコノス）':10,'ラッピング袋赤色 小（ニコノス）':9}}};
+const stReports={};
 const drinks=[{t:'standard',n:'本日のコーヒー'},{t:'standard',n:'カプチーノ',s:'エスプレッソ + スチームミルク + ミルクフォーム'},{t:'standard',n:'カフェラテ',s:'エスプレッソ + スチームミルク'},{t:'standard',n:'エスプレッソ'},{t:'standard',n:'ソイラテ'},{t:'standard',n:'オーツラテ'},{t:'standard',n:'アメリカーノ'},{t:'standard',n:'ポットサービス'},{t:'standard',n:'カフェオレ'},{t:'standard',n:'デカフェラテ'},{t:'standard',n:'キャラメルラテ'},{t:'standard',n:'カフェモカ'},{t:'standard',n:'ハンドドリップコーヒー'},{t:'standard',n:'チャイ'},{t:'standard',n:'オレンジジュース'},{t:'standard',n:'アップルジュース'},{t:'standard',n:'ティー'},{t:'standard',n:'ミルク系'},{t:'standard',n:'ビール'},{t:'standard',n:'ほうじ茶ラテ'},{t:'limited',n:'抹茶ラテ'},{t:'limited',n:'コーヒーフロート'},{t:'limited',n:'ラテフロート'},{t:'limited',n:'オリジナルレモネードコーヒートニック'},{t:'limited',n:'オリジナルレモネードスカッシュ'},{t:'limited',n:'コールドブリュー'},{t:'limited',n:'ホワイトモカ'},{t:'limited',n:'ラズベリーモカラテ'}];
 const foods=[{t:'standard',n:'＆chiffonホール'},{t:'standard',n:'ショコラテリーヌ'},{t:'standard',n:'カヌレ'},{t:'standard',n:'カヌレ バニラアイスのせ'},{t:'standard',n:'ホットサンド単品'},{t:'standard',n:'ホットサンド ドリンクセット'},{t:'standard',n:'バニラアイス'},{t:'standard',n:'アフォガード'},{t:'standard',n:'ほうじ茶アフォガード'},{t:'standard',n:'プレーンクッキー【単品】'},{t:'standard',n:'チョコチップクッキー【単品】'},{t:'limited',n:'抹茶テリーヌ'},{t:'limited',n:'ほうじ茶テリーヌ'},{t:'limited',n:'いちごショコラテリーヌ'},{t:'limited',n:'シュトーレン1本'},{t:'limited',n:'まっちゃもちドーム'},{t:'limited',n:'りんごさつまいもかぼちゃのタルト'},{t:'limited',n:'クッキーサンド'},{t:'limited',n:'カボチャのチーズケーキ'},{t:'limited',n:'雪だるまアップルパイ アイスのせ'},{t:'limited',n:'雪だるまアップルパイ'},{t:'limited',n:'マロンボール'},{t:'limited',n:'スコーンサンドウィッチ'},{t:'limited',n:'ブルーベリータルト'},{t:'limited',n:'いちごのチーズケーキ'},{t:'limited',n:'チーズケーキ'},{t:'limited',n:'カラメルフルーツケーキ'},{t:'limited',n:'りんごのタルト'},{t:'limited',n:'カラメルラムレーズンチーズケーキ'},{t:'limited',n:'レモンドーナツ'},{t:'limited',n:'ラムボール'},{t:'limited',n:'さくらチーズケーキ'},{t:'limited',n:'バナナタルト'},{t:'limited',n:'抹茶カヌレ'},{t:'limited',n:'抹茶カヌレ 抹茶アイスのせ'},{t:'limited',n:'まっちゃづくしセット'},{t:'limited',n:'まっちゃづくしセット【バニラ変更】'},{t:'limited',n:'りんごタルト'},{t:'limited',n:'チョコタルト'},{t:'limited',n:'ブラウニー'}];
-let irregOrders=[{id:1,date:'2026/4/4',reporter:'田中 葵',category:'コーヒー豆関係',item:'エスプレッソ豆（JR）',note:'在庫0.8kgのため至急',orderedAt:null},{id:2,date:'2026/4/4',reporter:'鈴木 健太',category:'シロップ／ソース',item:'チョコレートソース（トラーニ）',note:'',orderedAt:null},{id:3,date:'2026/4/3',reporter:'中村 美咲',category:'カップ／リッド／ストロー',item:'アイスMカップ（サンナップ）',note:'次回定期発注に追加',orderedAt:new Date(2026,3,3,15,0)}];
-const noticeData=[{id:1,badge:'重要',badgeClass:'badge-important',title:'週末の特別営業について',time:'本日 09:15',author:'店長 山田',text:'今週末（4/5・4/6）は周辺イベントの影響により特別営業となります。\n\n・開店時間：8:00（通常9:00）\n・閉店時間：21:00（変更なし）\n・臨時スタッフが1名入ります\n\n準備のため、オープン担当は7:30に出勤をお願いします。',confirmed:[{initials:'鈴木',color:'#FAEEDA',textColor:'#633806'},{initials:'中村',color:'#FAECE7',textColor:'#712B13'}]},{id:2,badge:'お知らせ',badgeClass:'badge-info',title:'夏季限定メニュー開始のお知らせ',time:'昨日 17:30',author:'副店長 佐藤',text:'来週月曜（4/7）より夏季限定メニューを開始します。\n\n・アイスメロンラテ ¥680\n・クールミントコーヒー ¥620\n・フローズンキャラメルマキアート ¥750\n\nレシピはマニュアルに追加済みです。',confirmed:[]},{id:3,badge:'済',badgeClass:'badge-done',title:'エスプレッソマシン定期メンテについて',time:'3日前',author:'店長 山田',text:'4月1日の定期メンテナンスが完了しました。引き続き毎日のバックフラッシュをお願いします。',confirmed:[{initials:'田中',color:'#E1F5EE',textColor:'#0F6E56'},{initials:'鈴木',color:'#FAEEDA',textColor:'#633806'}]}];
+let irregOrders=[];
+const noticeData=[];
 // スタッフごとの確認状態: {staffId: {noticeId: bool}}
 const confirmedByStaff={
   1:{1:false,2:false,3:true},  // 田中：3は確認済み
@@ -876,9 +875,9 @@ let submittedStocktake=null;
 let latestInventorySubmission=null;
 
 const pageTitles={dashboard:'ダッシュボード','daily-report':'日報報告',inventory:'在庫報告','order-request':'発注依頼',stocktake:'棚卸',notice:'業務連絡',manual:'マニュアル','admin-reports':'報告一覧','admin-orders':'発注管理','admin-stocktake':'棚卸一覧','admin-notice-add':'業務連絡 追加','admin-manual':'マニュアル編集','admin-staff':'スタッフ管理'};
-const dashNotices=[{badge:'重要',badgeClass:'badge-important',title:'週末の特別営業について',time:'本日 09:15',author:'店長 山田',text:'今週末は特別営業。開店8:00、臨時スタッフ1名入ります。'},{badge:'お知らせ',badgeClass:'badge-info',title:'夏季限定メニュー開始のお知らせ',time:'昨日 17:30',author:'副店長 佐藤',text:'来週月曜より夏季限定メニュー3品を開始します。レシピはマニュアルに追加済みです。'},{badge:'済',badgeClass:'badge-done',title:'エスプレッソマシン定期メンテについて',time:'3日前',author:'店長 山田',text:'定期メンテ完了。引き続き毎日のバックフラッシュをお願いします。'}];
-const dashLimited=[{status:'開催中',sc:'status-active',title:'夏季限定メニュー',period:'4/7〜6/30',text:'アイスメロンラテ・クールミントコーヒー・フローズンキャラメルマキアートの3品を提供中。',ended:false},{status:'予定',sc:'status-upcoming',title:'ラテアートワークショップ',period:'4/12（土）13:00〜15:00',text:'毎月第2土曜に開催。参加者上限6名。予約は店頭または電話にて。',ended:false},{status:'予定',sc:'status-upcoming',title:'ゴールデンウィーク特別営業',period:'4/29〜5/6',text:'GW期間中は全日8:00オープン・22:00クローズの延長営業。',ended:false},{status:'終了',sc:'status-ended',title:'春のギフトフェア',period:'3/1〜3/31',text:'ギフトボックスセットの特別販売。',ended:true}];
-const adminDailyData=[{id:'d1',date:'2026年4月4日（土）',reporter:'中村 美咲（クローズ）',status:'未提出',shifts:[{id:'s1o',label:'🌅 開けシフト',name:'田中 葵',submitted:true,weather:'☀️ 晴れ',ryogae:'¥50,000',ake:'田中 葵',naka:'鈴木 健太',regular:'山田さんが久しぶりにご来店。',trend:'午前中少なめで14時以降に混雑。',event:'特になし',other:'エスプレッソ豆の残量少なめ。'},{id:'s1m',label:'🌤 中番シフト',name:'鈴木 健太',submitted:true,weather:'☀️ 晴れ',ryogae:'なし',ake:'田中 葵',naka:'鈴木 健太',regular:'佐々木さん（2回目）来店。',trend:'14〜16時がピーク。フード注文率高め。',event:'13時ラテアートWS、参加5名。',other:'特になし'},{id:'s1c',label:'🌙 クローズシフト',name:'中村 美咲',submitted:false}]},{id:'d2',date:'2026年4月3日（金）',reporter:'鈴木 健太（クローズ）',status:'提出済',shifts:[{id:'s2o',label:'🌅 開けシフト',name:'中村 美咲',submitted:true,weather:'⛅ 曇り',ryogae:'¥30,000',ake:'中村 美咲',naka:'田中 葵',regular:'特になし',trend:'午前中少なめ、午後から回復。',event:'特になし',other:'冷蔵庫温度確認済み。'},{id:'s2m',label:'🌤 中番シフト',name:'田中 葵',submitted:true,weather:'⛅ 曇り',ryogae:'なし',ake:'中村 美咲',naka:'田中 葵',regular:'木村さん（常連）今月3回目。',trend:'全体落ち着いた一日。',event:'特になし',other:'特になし'},{id:'s2c',label:'🌙 クローズシフト',name:'鈴木 健太',submitted:true,weather:'⛅ 曇り',ryogae:'なし',ake:'中村 美咲',naka:'田中 葵',regular:'山本さんご来店。',trend:'夕方18時以降は落ち着き。',event:'特になし',other:'レジ締め問題なし。バックフラッシュ完了。'}]}];
+const dashNotices=[];
+const dashLimited=[];
+const adminDailyData=[];
 const manualFormDefs={recipe:[{id:'badge',label:'種別',type:'select',options:[{v:'standard',l:'定番'},{v:'limited',l:'限定'}]},{id:'title',label:'タイトル',type:'text',ph:'例：カプチーノ'},{id:'material',label:'材料',type:'text',ph:'例：エスプレッソ + スチームミルク'},{id:'photo',label:'完成写真',type:'photo'},{id:'steps',label:'レシピ・提供手順',type:'textarea',ph:'手順を改行で区切って入力'}],openclose:[{id:'title',label:'タイトル',type:'text',ph:'例：オープン手順'},{id:'duration',label:'所要時間',type:'text',ph:'例：約30分'},{id:'photo',label:'完了写真',type:'photo'},{id:'steps',label:'手順',type:'textarea',ph:'手順を改行で区切って入力'}],cleaning:[{id:'title',label:'タイトル',type:'text',ph:'例：日常清掃チェックリスト'},{id:'frequency',label:'実施頻度・タイミング',type:'text',ph:'例：毎日オープン時'},{id:'photo',label:'完了写真',type:'photo'},{id:'steps',label:'手順',type:'textarea',ph:'手順を改行で区切って入力'}],machine:[{id:'title',label:'タイトル',type:'text',ph:'例：バックフラッシュ手順'},{id:'frequency',label:'実施頻度・タイミング',type:'text',ph:'例：毎日クローズ時'},{id:'photo',label:'完了写真',type:'photo'},{id:'steps',label:'手順',type:'textarea',ph:'手順を改行で区切って入力'}],operation:[{id:'title',label:'タイトル',type:'text',ph:'例：接客の基本フロー'},{id:'timing',label:'実施タイミング',type:'text',ph:'例：入店〜退店まで'},{id:'photo',label:'画像',type:'photo'},{id:'steps',label:'手順・対応方法',type:'textarea',ph:'手順や対応方法を入力'}],register:[{id:'title',label:'タイトル',type:'text',ph:'例：レジ締め手順'},{id:'timing',label:'実施タイミング',type:'text',ph:'例：クローズ時'},{id:'photo',label:'参考画像',type:'photo'},{id:'steps',label:'手順',type:'textarea',ph:'手順を改行で区切って入力'}]};
 let currentManualCat='';let isEditMode=false;let editTarget=null;let mPhotoId=0;
 
@@ -949,35 +948,41 @@ function getDrumValues(){const rows=[...document.querySelectorAll('#inv-all-list
 function renderDashboard(){
   const nl=document.getElementById('dash-notice-list');nl.innerHTML='';
   const dashItems=noticeData.slice(0,7);
-  dashItems.forEach(n=>{
-    const row=document.createElement('div');row.className='notice-row';
-    const editBadge=n.edited?'<span class="badge badge-info" style="font-size:9px;padding:1px 5px">編集有</span>':'';
-    row.innerHTML=`<span class="badge ${n.badgeClass}">${n.badge}</span>${editBadge}<span class="notice-row-title">${n.title}</span><span class="notice-row-time">${n.editedAt||n.time}</span><span class="row-chev">›</span>`;
-    const det=document.createElement('div');det.className='row-detail';
-    // 本文
-    det.innerHTML=`<div class="detail-author">${n.author||''}</div><div class="detail-text">${(n.text||'').replace(/\n/g,'<br>')}</div>`;
-    // 画像
-    if(n.photos&&n.photos.length>0){
-      const photoWrap=document.createElement('div');
-      photoWrap.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:5px;margin-top:8px';
-      n.photos.forEach(src=>{
-        const img=document.createElement('img');
-        img.src=src;img.style.cssText='width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;border:.5px solid #e0e0e0';
-        photoWrap.appendChild(img);
-      });
-      det.appendChild(photoWrap);
-    }
-    row.addEventListener('click',()=>{const open=det.classList.toggle('open');row.querySelector('.row-chev').textContent=open?'↓':'›';nl.insertBefore(det,row.nextSibling);});
-    nl.appendChild(row);nl.appendChild(det);
-  });
+  if(!dashItems.length){
+    nl.innerHTML='<div style="padding:16px 14px;font-size:12px;color:#aaa;text-align:center">業務連絡はありません</div>';
+  }else{
+    dashItems.forEach(n=>{
+      const row=document.createElement('div');row.className='notice-row';
+      const editBadge=n.edited?'<span class="badge badge-info" style="font-size:9px;padding:1px 5px">編集有</span>':'';
+      row.innerHTML=`<span class="badge ${n.badgeClass}">${n.badge}</span>${editBadge}<span class="notice-row-title">${n.title}</span><span class="notice-row-time">${n.editedAt||n.time}</span><span class="row-chev">›</span>`;
+      const det=document.createElement('div');det.className='row-detail';
+      det.innerHTML=`<div class="detail-author">${n.author||''}</div><div class="detail-text">${(n.text||'').replace(/\n/g,'<br>')}</div>`;
+      if(n.photos&&n.photos.length>0){
+        const photoWrap=document.createElement('div');
+        photoWrap.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:5px;margin-top:8px';
+        n.photos.forEach(src=>{
+          const img=document.createElement('img');
+          img.src=src;img.style.cssText='width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;border:.5px solid #e0e0e0';
+          photoWrap.appendChild(img);
+        });
+        det.appendChild(photoWrap);
+      }
+      row.addEventListener('click',()=>{const open=det.classList.toggle('open');row.querySelector('.row-chev').textContent=open?'↓':'›';nl.insertBefore(det,row.nextSibling);});
+      nl.appendChild(row);nl.appendChild(det);
+    });
+  }
   const ll=document.getElementById('dash-limited-list');ll.innerHTML='';
-  dashLimited.forEach((item)=>{
-    const row=document.createElement('div');row.className='limited-row';
-    row.innerHTML=`<span class="status-pill ${item.sc}">${item.status}</span><span class="limited-row-title${item.ended?' ':''}" style="${item.ended?'color:#aaa':''}">${item.title}</span><span class="limited-period-text">${item.period}</span><span class="row-chev">›</span>`;
-    const det=document.createElement('div');det.className='limited-detail';det.innerHTML=`<div class="limited-detail-text">${item.text}</div>`;
-    row.addEventListener('click',()=>{const open=det.classList.toggle('open');row.querySelector('.row-chev').textContent=open?'↓':'›';});
-    ll.appendChild(row);ll.appendChild(det);
-  });
+  if(!dashLimited.length){
+    ll.innerHTML='<div style="padding:16px 14px;font-size:12px;color:#aaa;text-align:center">期間限定共有はありません</div>';
+  }else{
+    dashLimited.forEach((item)=>{
+      const row=document.createElement('div');row.className='limited-row';
+      row.innerHTML=`<span class="status-pill ${item.sc}">${item.status}</span><span class="limited-row-title${item.ended?' ':''}" style="${item.ended?'color:#aaa':''}">${item.title}</span><span class="limited-period-text">${item.period}</span><span class="row-chev">›</span>`;
+      const det=document.createElement('div');det.className='limited-detail';det.innerHTML=`<div class="limited-detail-text">${item.text}</div>`;
+      row.addEventListener('click',()=>{const open=det.classList.toggle('open');row.querySelector('.row-chev').textContent=open?'↓':'›';});
+      ll.appendChild(row);ll.appendChild(det);
+    });
+  }
 }
 renderDashboard();
 
@@ -1212,6 +1217,12 @@ function buildIrregCard(o,isDone){
 // ===== ADMIN STOCKTAKE =====
 function renderAdminSt(key){
   const r=stReports[key];
+  if(!r){
+    document.getElementById('st-admin-date').textContent='－';
+    document.getElementById('st-admin-reporter').textContent='－';
+    document.getElementById('st-admin-body').innerHTML='<div class="empty-state">棚卸データがありません</div>';
+    return;
+  }
   document.getElementById('st-admin-date').textContent=r.date;
   document.getElementById('st-admin-reporter').textContent=r.reporter;
   const body=document.getElementById('st-admin-body');body.innerHTML='';
@@ -1234,7 +1245,8 @@ function renderAdminSt(key){
     block.appendChild(head);block.appendChild(bodyEl);body.appendChild(block);
   });
 }
-renderAdminSt('2026-03-31');
+// 棚卸データがある場合のみ描画
+if(Object.keys(stReports).length>0){renderAdminSt(Object.keys(stReports)[0]);}
 
 // ===== ADMIN MANUAL =====
 function buildAdminManualList(items,containerId,cat){
@@ -1374,7 +1386,7 @@ buildNoticePhotoGrid();
 function onNoticeCategoryChange(){const cat=document.getElementById('notice-category').value;const pr=document.getElementById('period-row');if(pr)pr.className='period-row'+(cat==='limited'?' visible':'');updateNoticePreview();}
 let confirmOn=false;
 function toggleConfirm(){confirmOn=!confirmOn;const ts=document.getElementById('confirm-toggle');if(ts)ts.classList.toggle('on',confirmOn);const pc=document.getElementById('preview-confirm');if(pc)pc.style.display=confirmOn?'inline-flex':'none';}
-function updateNoticePreview(){const badge=document.getElementById('notice-badge')?.value||'important';const title=document.getElementById('notice-title-input')?.value||'タイトルがここに表示されます';const body=document.getElementById('notice-body-input')?.value||'本文がここに表示されます';const cat=document.getElementById('notice-category')?.value||'notice';const badgeEl=document.getElementById('preview-badge');if(badgeEl){badgeEl.className='preview-badge '+badge;const badgeLabels={important:'重要',share:'共有',info:'お知らせ'};badgeEl.textContent=badgeLabels[badge]||badge;}const ptEl=document.getElementById('preview-title');if(ptEl)ptEl.textContent=title;const pbEl=document.getElementById('preview-body');if(pbEl)pbEl.innerHTML=body.replace(/\n/g,'<br>');const periodEl=document.getElementById('preview-period');if(periodEl){if(cat==='limited'){const start=document.getElementById('period-start')?.value;const end=document.getElementById('period-end')?.value;if(start||end){const fmt=d=>d?d.replace(/-/g,'/'):'未設定';periodEl.textContent='📅 '+fmt(start)+' 〜 '+fmt(end);periodEl.style.display='block';}else{periodEl.style.display='none';}}else{periodEl.style.display='none';}}}
+function updateNoticePreview(){const badge=document.getElementById('notice-badge')?.value||'important';const title=document.getElementById('notice-title-input')?.value||'タイトルがここに表示されます';const body=document.getElementById('notice-body-input')?.value||'本文がここに表示されます';const cat=document.getElementById('notice-category')?.value||'notice';const badgeEl=document.getElementById('preview-badge');if(badgeEl){badgeEl.className='preview-badge '+badge;const badgeLabels={important:'重要',share:'共有',info:'お知らせ',schedule:'予定'};badgeEl.textContent=badgeLabels[badge]||badge;}const ptEl=document.getElementById('preview-title');if(ptEl)ptEl.textContent=title;const pbEl=document.getElementById('preview-body');if(pbEl)pbEl.innerHTML=body.replace(/\n/g,'<br>');const periodEl=document.getElementById('preview-period');if(periodEl){if(cat==='limited'){const start=document.getElementById('period-start')?.value;const end=document.getElementById('period-end')?.value;if(start||end){const fmt=d=>d?d.replace(/-/g,'/'):'未設定';periodEl.textContent='📅 '+fmt(start)+' 〜 '+fmt(end);periodEl.style.display='block';}else{periodEl.style.display='none';}}else{periodEl.style.display='none';}}}
 function resetNoticeForm(){const fields=['notice-category','notice-badge','notice-title-input','notice-body-input','period-start','period-end'];fields.forEach(id=>{const el=document.getElementById(id);if(el)el.value=el.tagName==='SELECT'?el.options[0]?.value:'';});const pr=document.getElementById('period-row');if(pr)pr.className='period-row';noticePhotos.fill(null);buildNoticePhotoGrid();if(confirmOn)toggleConfirm();updateNoticePreview();}
 // 業務連絡投稿（管理者→スタッフ画面へ反映）
 let noticeIdCounter=100;
@@ -1384,8 +1396,8 @@ function submitNotice(){
   if(!title){const el=document.getElementById('notice-title-input');if(el){el.style.borderColor='#E24B4A';el.focus();}return;}
   if(!body){const el=document.getElementById('notice-body-input');if(el){el.style.borderColor='#E24B4A';el.focus();}return;}
   const badgeVal=document.getElementById('notice-badge')?.value||'important';
-  const badgeLabels={important:'重要',share:'共有',info:'お知らせ'};
-  const badgeClassMap={important:'badge-important',share:'badge-share',info:'badge-info'};
+  const badgeLabels={important:'重要',share:'共有',info:'お知らせ',schedule:'予定'};
+  const badgeClassMap={important:'badge-important',share:'badge-share',info:'badge-info',schedule:'badge-schedule'};
   // 画像データを収集
   const photos=noticePhotos.filter(p=>p!==null);
   const newNotice={
@@ -1482,7 +1494,7 @@ let editingNoticeId=null;
 function openNoticeEditModal(n){
   editingNoticeId=n.id;
   document.getElementById('notice-edit-modal-title').textContent='「'+n.title+'」を編集';
-  const badgeRev={重要:'important',共有:'share',お知らせ:'info',済:'share'};
+  const badgeRev={重要:'important',共有:'share',お知らせ:'info',済:'share',予定:'schedule'};
   document.getElementById('notice-edit-badge').value=badgeRev[n.badge]||'important';
   document.getElementById('notice-edit-title').value=n.title;
   document.getElementById('notice-edit-body').value=n.text;
@@ -1492,8 +1504,8 @@ function closeNoticeEditModal(){document.getElementById('notice-edit-modal').cla
 function saveNoticeEdit(){
   const n=noticeData.find(x=>x.id===editingNoticeId);if(!n)return;
   const badgeVal=document.getElementById('notice-edit-badge').value;
-  const badgeLabels={important:'重要',share:'共有',info:'お知らせ'};
-  const badgeClassMap={important:'badge-important',share:'badge-share',info:'badge-info'};
+  const badgeLabels={important:'重要',share:'共有',info:'お知らせ',schedule:'予定'};
+  const badgeClassMap={important:'badge-important',share:'badge-share',info:'badge-info',schedule:'badge-schedule'};
   const now=new Date();const p=x=>String(x).padStart(2,'0');
   n.badge=badgeLabels[badgeVal];n.badgeClass=badgeClassMap[badgeVal];
   n.title=document.getElementById('notice-edit-title').value.trim();
