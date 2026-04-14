@@ -7,12 +7,12 @@
 <title>Café Manager</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;background:#f5f5f0;height:100vh;overflow:hidden}
-.app{display:flex;height:100vh;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;background:#f5f5f0;height:100vh;height:100svh;overflow:hidden}
+.app{display:flex;height:100vh;height:100svh;overflow:hidden}
 
 /* SIDEBAR - コンパクト */
 .sidebar{width:64px;background:#fff;border-right:.5px solid #e0e0e0;display:flex;flex-direction:column;flex-shrink:0;transition:width .25s ease;overflow:hidden;height:100%}
-.sidebar-nav-scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.sidebar-nav-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .sidebar-nav-scroll::-webkit-scrollbar{display:none}
 .sidebar.expanded{width:200px}
 .sidebar-toggle{width:100%;padding:14px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;border-bottom:.5px solid #e8e8e8;background:#fff;border:none;flex-shrink:0}
@@ -44,7 +44,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku
 .nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:#1D9E75;border-radius:0 3px 3px 0}
 .sidebar.expanded .nav-item.active::before{display:none}
 
-.user-area{padding:8px 0;border-top:.5px solid #e8e8e8;flex-shrink:0;background:#fff;z-index:10}
+.user-area{flex-shrink:0;padding:8px 0;border-top:.5px solid #e8e8e8;background:#fff;z-index:10}
 .role-toggle-mini{display:none!important}
 .role-toggle-full{display:none!important}
 .toggle-pill{display:none!important}
